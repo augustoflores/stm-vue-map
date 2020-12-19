@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import UbicationsComponent from '../views/UbicationsComponent'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'Ubicaciones',
+    component: UbicationsComponent
   },
   {
     path: '/about',
