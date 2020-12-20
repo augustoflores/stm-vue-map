@@ -10,7 +10,7 @@
         fullscreenControl: true,
         disableDefaultUI: false
       }"
-      :zoom="10" 
+      :zoom="zoom" 
       :center="{lat: centerLat, lng: centerLng}"
       ref="map"
     >
@@ -66,6 +66,7 @@ export default {
   props: {
     texto: String,
     markers: Array,
+    zoom: Number,
     centerLat: Number,
     centerLng: Number,
     infoDireccionComercial: String,

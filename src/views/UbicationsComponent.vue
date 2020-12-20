@@ -8,6 +8,7 @@
             :infoTipoLona="infoTipoLona"
             :centerLat="centerLat"
             :centerLng="centerLng"
+            :zoom="zoom"
             v-on:childToParent="onChildEvent"
           />
     </div>
@@ -44,6 +45,7 @@ export default {
       showSnackbar: false,
       centerLat: 19.73038424639754,
       centerLng: -99.28264835562116,
+      zoom:10,
   }),
   mounted() {
     this.axios.get("/ubicaciones.json").then(response => {
