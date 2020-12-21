@@ -1,8 +1,9 @@
 <template>
   <div class="md-layout md-alignment-center ubications">
+    <img src="../assets/sotmedia.png" class="logo">
     <div class="md-layout-item col md-xsmall-size-100 md-medium-size-100 map">
           <VueMap 
-            :markers="markers" 
+            :markers="filterMarkers()" 
             :infoDireccionComercial="infoDireccionComercial" 
             :infoFormato="infoFormato" 
             :infoTipoLona="infoTipoLona"
@@ -10,6 +11,7 @@
             :centerLng="centerLng"
             :zoom="zoom"
             v-on:childToParent="onChildEvent"
+            v-on:zoomToParent="onZoomEvent"
           />
     </div>
     <div class="filter">
@@ -17,7 +19,10 @@
             :infoDireccionComercial="infoDireccionComercial" 
             :infoFormato="infoFormato" 
             :infoTipoLona="infoTipoLona"
-            v-on:filterToParent="onFilterEvent"
+            :total="total"
+            v-on:filterPlaceToParent="onFilterPlaceEvent"
+            v-on:filterTipoToParent="onFilterTipoEvent"
+            v-on:filterFormatoToParent="onFilterFormatoEvent"
           />
     </div>
     <md-snackbar  :md-duration="Infinity" :md-active.sync="showSnackbar" >
@@ -36,7 +41,8 @@ export default {
     VueMap,
     VueFilter
   },
-  data: () => ({
+  data:  function (){
+    return{
       menuVisible: true,
       markers: [],
       infoDireccionComercial: "String",
@@ -45,8 +51,12 @@ export default {
       showSnackbar: false,
       centerLat: 19.73038424639754,
       centerLng: -99.28264835562116,
-      zoom:10,
-  }),
+      zoom:6,
+      filtrosTipo:[],
+      filtrosFormato:[],
+      total: 0,
+    }
+  },
   mounted() {
     this.axios.get("/ubicaciones.json").then(response => {
       this.markers = response.data
@@ -56,20 +66,47 @@ export default {
       toggleMenu () {
         this.menuVisible = !this.menuVisible
       },
+      onZoomEvent(value) {
+        this.zoom=30;
+        this.centerLat=value.lat;
+        this.centerLng=value.lng;
+      },
       onChildEvent(info) {
         this.infoDireccionComercial = info.direccionComercial
         this.infoFormato = info.formato
         this.infoTipoLona = info.tipoLona
         this.showSnackbar=info.showSnackbar
       },
-      onFilterEvent(place) {
+      onFilterPlaceEvent(place) {
         this.centerLat = place.centerLat
         this.centerLng= place.centerLng
+        this.zoom=13
+      },
+      onFilterFormatoEvent(value) {
+        this.filtrosFormato=value.formato;
+      },
+      onFilterTipoEvent(value) {
+        this.filtrosTipo=value.tipo;
+      },
+      filterMarkers(){
+        var filtrosTipo=this.filtrosTipo;
+        var filtrosFormato=this.filtrosFormato;
+        var newMarkers=this.markers.filter(
+          function(elem){
+            if(filtrosFormato.includes(elem.formato)){
+              return true
+            }
+            if(filtrosTipo.includes(elem.tipo_lona)){
+              return true
+            }
+          }
+        );
+        this.total=newMarkers.length
+        return newMarkers
       }
     }
 }
 </script>
-
 <style lang="scss" scoped>
   .md-app {
     min-height: 350px;
@@ -85,6 +122,16 @@ export default {
     left: 0px;
     bottom: 0px;
     width: 100vw;
+    height: 25vh;
+  }
+  .logo{
+    height: 40px;
+    position: absolute;
+    top: 10px;
+    right: 60px;
+    z-index: 1;
+    background: white;
+    padding: 4px;
   }
   @media only screen and (min-width: 600px) {
     .filter{
@@ -92,15 +139,12 @@ export default {
       left: 50px;
       bottom: 50px;
       width: 40vw;
+      height: 30vh;
     } 
   }
-    @media only screen and (min-width: 100px) {
+  @media only screen and (min-width: 960px) {
     .filter{
-      position: fixed;
-      left: 50px;
-      bottom: 50px;
       width: 30vw;
     } 
   }
-
 </style>
