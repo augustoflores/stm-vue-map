@@ -17,6 +17,7 @@
       :zoom="zoom" 
       :center="{lat: centerLat, lng: centerLng}"
       ref="map"
+      @zoom_changed="zoomChanged"
     >
       <gmap-cluster
       :gridSize="30"
@@ -55,9 +56,9 @@
             Vista: {{infoVista}}<br>
             <md-divider></md-divider>
             <md-subheader><md-icon class="icon">aspect_ratio</md-icon>Medidas</md-subheader>
-            Altura: {{infoAltura}}<br>
-            Base: {{infoBase}}<br>
-            Superficie: {{infoSuperficie}}<br>
+            <span v-if="infoAltura">Altura: {{infoAltura}}<br></span>
+            <span v-if="infoBase">Base: {{infoBase}}<br></span>
+            <span v-if="infoSuperficie">Superficie: {{infoSuperficie}}<br></span>
           </md-tab>
 
           <md-tab md-label="Vista de calle">
@@ -156,7 +157,8 @@ export default {
         this.showDialog = false
         this.$emit('zoomToParent', {
           lat:Number(this.currentUbication.lat),
-          lng:Number(this.currentUbication.lng)
+          lng:Number(this.currentUbication.lng),
+          zoom:30
         })
       },
        ubicationOver:function(info){
@@ -184,6 +186,11 @@ export default {
         })
         });
       },
+      zoomChanged : function(value){
+        this.$emit('zoomChangedToParent', {
+          zoom:value,
+        })
+      }
   }
 }
 </script>

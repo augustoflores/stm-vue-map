@@ -1,6 +1,6 @@
 <template>
   <div class="md-layout md-alignment-center ubications">
-    <img src="../assets/sotmedia.png" class="logo">
+    <!--img src="../assets/sotmedia.png" class="logo"-->
     <div class="md-layout-item col md-xsmall-size-100 md-medium-size-100 map">
           <VueMap 
             :markers="filterMarkers()" 
@@ -12,6 +12,8 @@
             :zoom="zoom"
             v-on:childToParent="onChildEvent"
             v-on:zoomToParent="onZoomEvent"
+            v-on:zoomChangedToParent="onZoomChangedEvent"
+            
           />
     </div>
     <div class="filter">
@@ -20,6 +22,7 @@
             :infoFormato="infoFormato" 
             :infoTipoLona="infoTipoLona"
             :total="total"
+            :search="search"
             v-on:filterPlaceToParent="onFilterPlaceEvent"
             v-on:filterTipoToParent="onFilterTipoEvent"
             v-on:filterFormatoToParent="onFilterFormatoEvent"
@@ -55,6 +58,7 @@ export default {
       filtrosTipo:[],
       filtrosFormato:[],
       total: 0,
+      search: "busca",
     }
   },
   mounted() {
@@ -67,9 +71,12 @@ export default {
         this.menuVisible = !this.menuVisible
       },
       onZoomEvent(value) {
-        this.zoom=30;
+        this.zoom=value.zoom;
         this.centerLat=value.lat;
         this.centerLng=value.lng;
+      },
+      onZoomChangedEvent(value) {
+        this.zoom=value.zoom;
       },
       onChildEvent(info) {
         this.infoDireccionComercial = info.direccionComercial
@@ -78,9 +85,11 @@ export default {
         this.showSnackbar=info.showSnackbar
       },
       onFilterPlaceEvent(place) {
+        console.log(place.search);
         this.centerLat = place.centerLat
         this.centerLng= place.centerLng
         this.zoom=13
+        this.search=place.search
       },
       onFilterFormatoEvent(value) {
         this.filtrosFormato=value.formato;

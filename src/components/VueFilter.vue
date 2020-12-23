@@ -6,6 +6,7 @@
         <div class="md-layout-item col  md-medium-size-100 md-large-size-100 autocompletefield">
           <gmap-autocomplete class="autocomplete"
             @place_changed="setPlace"
+            :value="search"
             :options="{
               componentRestrictions: {
                 country: [
@@ -56,16 +57,14 @@
           </md-select>
         </md-field>
       </div>
-      <div class="md-layout-item col md-size-100">
+      <!--div class="md-layout-item col md-size-100">
         Total: {{total}}
-      </div>
-
+      </div-->
     </div>
   </md-card-content>
   </md-card>
 </div>
 </template>
-
 <script>
 export default {
   name: 'VueFilter',
@@ -78,7 +77,8 @@ export default {
     centerLng: Number,
     parentSelectedTipo: Array,
     parentSelectedFormato: Array,
-    total:Number
+    total:Number,
+    search: String,
   },
   data:() => ({
     tipo_lona: String,
@@ -97,10 +97,12 @@ export default {
   },
   methods: {
     setPlace(place) {
-      if(place.geometry){        
+      if(place.geometry){     
+        this.search="Buscando..."   
         this.$emit('filterPlaceToParent', {
           centerLat:place.geometry.location.lat(),
-          centerLng:place.geometry.location.lng()
+          centerLng:place.geometry.location.lng(),
+          search:""
         })
       }
     },
@@ -117,7 +119,6 @@ export default {
   }
 }
 </script>
-
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 h3 {
@@ -158,7 +159,6 @@ a {
   top: 0;
   background-color: white;
 }
-
 @media only screen and (min-width: 600px) {
   .filtro{
     border-radius: 20px;
