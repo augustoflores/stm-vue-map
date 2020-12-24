@@ -1,5 +1,10 @@
 <template>
   <div class="map">
+    <router-view name="ficha"
+    :markers="markers"
+    :marker="marker"
+    v-on:zoomToParent="onZoomEvent"
+    />
     <GmapMap style="width: 100%; height: 100%;" 
       :options="{
         zoomControl: true,
@@ -7,7 +12,7 @@
         scaleControl: true,
         streetViewControl: true,
         rotateControl: false,
-        fullscreenControl: true,
+        fullscreenControl: false,
         disableDefaultUI: false,
         restriction: {
           latLngBounds: bounds,
@@ -41,40 +46,6 @@
           <md-icon>my_location</md-icon>
         </md-speed-dial-target>
       </md-speed-dial>
-      <md-dialog :md-active.sync="showDialog">
-        <md-dialog-title class="dialogTitle"><md-icon class="icon">room</md-icon>{{infoDireccionComercial}}</md-dialog-title>
-        <md-tabs md-dynamic-height>
-          <md-tab md-label="Información">
-            <md-subheader><md-icon class="icon">map</md-icon>Ubicacion</md-subheader>
-            Ciudad: {{infoCiudad}}<br>
-            Colonia: {{infoColonia_comercial}}<br>
-            Delegacion o municipio: {{infoDelegacion}}<br>
-            <md-divider></md-divider>
-            <md-subheader><md-icon class="icon">assignment</md-icon>Especificaciones</md-subheader>
-            Formato: {{infoFormato}}<br>
-            Tipo de lona: {{infoTipoLona}}<br>
-            Vista: {{infoVista}}<br>
-            <md-divider></md-divider>
-            <md-subheader><md-icon class="icon">aspect_ratio</md-icon>Medidas</md-subheader>
-            <span v-if="infoAltura">Altura: {{infoAltura}}<br></span>
-            <span v-if="infoBase">Base: {{infoBase}}<br></span>
-            <span v-if="infoSuperficie">Superficie: {{infoSuperficie}}<br></span>
-          </md-tab>
-
-          <md-tab md-label="Vista de calle">
-            <gmap-street-view-panorama class="pano"
-            :pov="{heading: 0, pitch: 0}"
-            :position="{lat: Number(this.currentUbication.lat),lng: Number(this.currentUbication.lng)}"
-            :zoom="1" >
-            </gmap-street-view-panorama>
-          </md-tab>
-        </md-tabs>
-        <md-dialog-actions>
-          <md-button class="md-primary" @click="zoomClick()">Acercarse<md-icon class="icon">zoom_in</md-icon></md-button>
-
-          <md-button class="md-primary" @click="showDialog = false">Cerrar<md-icon class="icon">close</md-icon></md-button>
-        </md-dialog-actions>
-      </md-dialog>
   </div>
 </template>
 
@@ -85,7 +56,6 @@ import VueAxios from 'vue-axios'
 import GoogleMapCluster from 'vue2-google-maps/dist/components/cluster'
 Vue.component('gmap-cluster', GoogleMapCluster);
 Vue.use(VueAxios, axios)
-
 export default {
   name: 'VueMap',
   components: {
@@ -93,6 +63,7 @@ export default {
   props: {
     texto: String,
     markers: Array,
+    marker:String,
     zoom: Number,
     centerLat: Number,
     centerLng: Number,
@@ -100,18 +71,9 @@ export default {
     infoFormato: String,
     infoTipoLona: String,
     showSnackbar: Boolean,
-    //Dialog info
-    /*infoAltura: String,
-    infoBase: String,
-    infoCiudad: String,
-    infoColonia_comercial: String,
-    infoColonia_fiscal: String,
-    infoDelegacion: String,
-    infoSuperficie: String,
-    infoVista: String,*/
+    showDialog: Boolean,
   },
   data:() => ({
-    showDialog: false,
     currentUbication: {},
     infoWindowPos: null,
     infoWinOpen: false,
@@ -128,39 +90,15 @@ export default {
         height: -35
       }
     },
-    //Dialog info
-    infoAltura: "",
-    infoBase: "",
-    infoCiudad: "",
-    infoColonia_comercial: "",
-    infoColonia_fiscal: "",
-    infoDelegacion: "",
-    infoSuperficie: "",
-    infoVista: "",
   }),
   mounted() {
-
   },
    methods: {
       ubicationClick:function(info){
-        this.currentUbication=info
-        //this.zoom=50
-        this.infoCiudad=info.ciudad
-        this.infoColonia_comercial=info.colonia_comercial
-        this.infoColonia_fiscal=info.colonia_fiscal
-        this.infoDelegacion=info.delegacion
-        this.infoSuperficie=info.superficie
-        this.infoVista=info.vista
-        this.showDialog = true
+        this.$router.push("/"+info.id)
+
       },
-      zoomClick:function(){
-        this.showDialog = false
-        this.$emit('zoomToParent', {
-          lat:Number(this.currentUbication.lat),
-          lng:Number(this.currentUbication.lng),
-          zoom:30
-        })
-      },
+
        ubicationOver:function(info){
         this.$emit('childToParent', {
           direccionComercial:info.direccion_comercial,
@@ -190,7 +128,15 @@ export default {
         this.$emit('zoomChangedToParent', {
           zoom:value,
         })
-      }
+      },
+      onZoomEvent(value) {
+        this.$emit('zoomToParent', {
+          zoom:30,
+          centerLat:value.lat,
+          centerLng:value.lng,
+        })
+        
+      },
   }
 }
 </script>

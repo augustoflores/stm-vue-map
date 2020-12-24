@@ -3,6 +3,7 @@
     <!--img src="../assets/sotmedia.png" class="logo"-->
     <div class="md-layout-item col md-xsmall-size-100 md-medium-size-100 map">
           <VueMap 
+            v-if="isLoaded"
             :markers="filterMarkers()" 
             :infoDireccionComercial="infoDireccionComercial" 
             :infoFormato="infoFormato" 
@@ -10,10 +11,11 @@
             :centerLat="centerLat"
             :centerLng="centerLng"
             :zoom="zoom"
+            :showDialog="showDialog"
             v-on:childToParent="onChildEvent"
             v-on:zoomToParent="onZoomEvent"
             v-on:zoomChangedToParent="onZoomChangedEvent"
-            
+            v-on:showDialogToParent="showDialogEvent"
           />
     </div>
     <div class="filter">
@@ -46,6 +48,7 @@ export default {
   },
   data:  function (){
     return{
+      isLoaded: false,
       menuVisible: true,
       markers: [],
       infoDireccionComercial: "String",
@@ -58,22 +61,26 @@ export default {
       filtrosTipo:[],
       filtrosFormato:[],
       total: 0,
-      search: "busca",
+      search: "",
+      showDialog: false
     }
   },
-  mounted() {
+  beforeMount() {
     this.axios.get("/ubicaciones.json").then(response => {
+      this.isLoaded = true;
       this.markers = response.data
     })
   },
   methods: {
-      toggleMenu () {
-        this.menuVisible = !this.menuVisible
+      showDialogEvent (dialog) {
+        this.showDialog= dialog.dialogvisible
       },
       onZoomEvent(value) {
+        console.log(value)
         this.zoom=value.zoom;
-        this.centerLat=value.lat;
-        this.centerLng=value.lng;
+        this.centerLat=Number(value.centerLat);
+        this.centerLng=Number(value.centerLng);
+        this.showDialog= value.dialogvisible;
       },
       onZoomChangedEvent(value) {
         this.zoom=value.zoom;
@@ -117,6 +124,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+  
   .md-app {
     min-height: 350px;
     border: 1px solid rgba(#000, .12);
