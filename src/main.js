@@ -4,10 +4,9 @@ import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
 import App from './App.vue'
 import * as VueGoogleMaps from 'vue2-google-maps'
-//import GmapCluster from 'vue2-google-maps'
-
 import './registerServiceWorker'
 import router from './router'
+import VueSessionStorage from 'vue-sessionstorage'
 
 Vue.use(VueMaterial)
 Vue.use(VueGoogleMaps, {
@@ -19,9 +18,7 @@ Vue.use(VueGoogleMaps, {
     v: '3.26',
   },
 })
-//Vue.use(GmapCluster);
-//Vue.component('GmapCluster', GmapCluster)
-
+Vue.use(VueSessionStorage)
 
 
 Vue.config.productionTip = false

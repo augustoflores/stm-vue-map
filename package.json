@@ -16,6 +16,7 @@
     "vue-fullscreen": "^2.1.6",
     "vue-material": "^1.0.0-beta-15",
     "vue-router": "^3.2.0",
+    "vue-sessionstorage": "^1.0.0",
     "vue2-google-maps": "^0.10.7"
   },
   "devDependencies": {

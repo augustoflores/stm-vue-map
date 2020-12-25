@@ -9,7 +9,7 @@
         :infoFormato="infoFormato" :infoTipoLona="infoTipoLona" :centerLat="centerLat" :centerLng="centerLng"
         :zoom="zoom" :showDialog="showDialog" v-on:childToParent="onChildEvent" v-on:zoomToParent="onZoomEvent"
         v-on:zoomChangedToParent="onZoomChangedEvent" v-on:showDialogToParent="showDialogEvent"
-        v-on:fullscreenToParent="toggle" :authenticated="authenticated"/>
+        v-on:tokenToParent="onTokenToParent" v-on:fullscreenToParent="toggle" :authenticated="authenticated"/>
     </div>
     <div class="filter">
       <VueFilter :infoDireccionComercial="infoDireccionComercial" :infoFormato="infoFormato"
@@ -48,8 +48,11 @@
         total: 0,
         search: "",
         showDialog: false,
-        authenticated: false,
+        authenticated: null,
       }
+    },
+    mounted(){
+      this.authenticated=this.$session.get('authenticated')
     },
     beforeMount() {
       this.axios.get("/ubicaciones.json").then(response => {
@@ -89,6 +92,9 @@
       },
       onFilterTipoEvent(value) {
         this.filtrosTipo = value.tipo;
+      },
+      onTokenToParent(value){
+          this.authenticated = value;
       },
       filterMarkers() {
         var filtrosTipo = this.filtrosTipo;

@@ -1,6 +1,6 @@
 <template>
   <div class="map">
-    <router-view name="ficha" :authenticated="authenticated" :markers="markers" :marker="marker" v-on:zoomToParent="onZoomEvent" />
+    <router-view name="ficha" :authenticated="authenticated" :markers="markers" :marker="marker" v-on:zoomToParent="onZoomEvent"  v-on:tokenToParent="onTokenToParent"/>
     <GmapMap style="width: 100%; height: 100%;"  :options="{
         zoomControl: true,
         mapTypeControl: true,
@@ -64,7 +64,7 @@
       infoTipoLona: String,
       showSnackbar: Boolean,
       showDialog: Boolean,
-      authenticated: Boolean,
+      authenticated: String,
     },
     data: () => ({
       fullscreen: false,
@@ -130,6 +130,9 @@
           centerLat: value.lat,
           centerLng: value.lng,
         })
+      },
+      onTokenToParent(value){
+          this.$emit("tokenToParent", value);
       },
       gotoFullscreen() {
         this.fullscreen = !this.fullscreen

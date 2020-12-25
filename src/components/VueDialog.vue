@@ -45,13 +45,13 @@
             <div class="md-layout-item md-xsmall-size-100 md-small-size-50">
               <md-field>
                 <label>Usuario</label>
-                <md-input></md-input>
+                <md-input v-model="username"></md-input>
               </md-field>
             </div>
             <div class="md-layout-item md-xsmall-size-100 md-small-size-50">
               <md-field>
                 <label>Contraseña</label>
-                <md-input type="password"></md-input>
+                <md-input v-model="password" type="password"></md-input>
               </md-field>
             </div>
         </div>
@@ -60,9 +60,15 @@
               <a href="/registrate">
                 <md-button class="md-raised">Registrate<md-icon class="icon">person_add</md-icon></md-button>
               </a>
-              <a href="/ingresar">
-                <md-button class="md-raised md-primary">Ingresar<md-icon class="icon">login</md-icon></md-button>
-              </a>
+                <md-button :disabled="loginwait" class="md-raised md-primary" @click="doLogin()">Ingresar
+                  <md-icon class="icon" v-if="!loginwait">login</md-icon>
+                <md-progress-spinner v-if="loginwait" class="md-accent" :md-diameter="15" md-stroke="2" md-mode="indeterminate"></md-progress-spinner>
+                </md-button>
+            </div>
+            <div class="md-layout-item md-size-100 alignright">
+              <md-chip class="md-accent" v-if="loginerror">
+                Error de autenticacion <md-icon>error</md-icon>
+              </md-chip>
             </div>
         </div>
       </md-tab>
@@ -81,6 +87,12 @@
   </md-dialog>
 </template>
 <script>
+
+import Vue from 'vue'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+Vue.use(VueAxios, axios)
+
 export default {
   name: 'VueDialog',
   props: {
@@ -104,7 +116,11 @@ export default {
     infoSuperficie: "-",
     infoVista: "-",
     lat:0,
-    lng:0
+    lng:0,
+    username:'',
+    password:'',
+    loginerror:false,
+    loginwait: false
   }),
   mounted() {
     this.getUbication(this.$route.params.marker)
@@ -146,6 +162,20 @@ export default {
         this.infoVista= this.currentUbication.vista
         this.lat=this.currentUbication.lat
         this.lng=this.currentUbication.lng
+      },
+      doLogin() {
+        this.loginerror=false
+        this.loginwait=true
+        axios.post('https://devel.sotmedia.com.mx/wp-json/jwt-auth/v1/token', {
+          username: this.username,
+          password: this.password
+        }).then(response => {
+          this.$session.set('authenticated', response.data.token);
+          this.$emit("tokenToParent", this.authenticated=response.data.token) ;
+        }).catch(function () {
+          this.loginerror=true
+          this.loginwait=false
+        });
       }
   }
 }
