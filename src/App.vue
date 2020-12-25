@@ -1,8 +1,33 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+    <div id="app">
+        <router-view
+          v-on:fullscreenToParent="toggle"
+        />
+    </div>
 </template>
+<script>
+  import Vue from 'vue'
+  import fullscreen from 'vue-fullscreen'
+  Vue.use(fullscreen)
+  export default {
+    name: 'App',
+    components: {
+    },
+    data: function () {
+      return {
+        fullscreen: false,
+      }
+    },
+    methods: {
+      toggle() {
+        this.$fullscreen.toggle(document.body,{fullscreenClass:"fullscreen", wrap: false})
+      },
+      fullscreenChange(fullscreen) {
+        this.fullscreen = fullscreen
+      }
+    }
+  }
+</script>
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -16,7 +41,6 @@
   a {
     font-weight: bold;
     color: #2c3e50;
-
     &.router-link-exact-active {
       color: #42b983;
     }

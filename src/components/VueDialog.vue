@@ -1,36 +1,84 @@
 <template>
-    <md-dialog :md-active="showDialog" >
-        <md-dialog-title class="dialogTitle"><md-icon class="icon">room</md-icon>{{infoDireccionComercial}}</md-dialog-title>
-        <md-tabs md-dynamic-height>
-          <md-tab md-label="Información">
-            <md-subheader><md-icon class="icon">map</md-icon>Ubicacion</md-subheader>
-            Ciudad: {{infoCiudad}}<br>
-            Colonia: {{infoColonia_comercial}}<br>
-            Delegacion o municipio: {{infoDelegacion}}<br>
-            <md-divider></md-divider>
-            <md-subheader><md-icon class="icon">assignment</md-icon>Especificaciones</md-subheader>
-            Formato: {{infoFormato}}<br>
-            Tipo de lona: {{infoTipoLona}}<br>
-            Vista: {{infoVista}}<br>
-            <md-divider></md-divider>
-            <md-subheader><md-icon class="icon">aspect_ratio</md-icon>Medidas</md-subheader>
-            <span v-if="infoAltura">Altura: {{infoAltura}}<br></span>
-            <span v-if="infoBase">Base: {{infoBase}}<br></span>
-            <span v-if="infoSuperficie">Superficie: {{infoSuperficie}}<br></span>
-          </md-tab>
-          <md-tab md-label="Vista de calle">
-            <gmap-street-view-panorama class="pano"
-            :pov="{heading: 0, pitch: 0}"
-            :position="{lat: Number(this.lat),lng: Number(this.lng)}"
-            :zoom="1" >
-            </gmap-street-view-panorama>
-          </md-tab>
-        </md-tabs>
-        <md-dialog-actions>
-          <md-button class="md-primary" @click="zoomClick()">Acercarse<md-icon class="icon">zoom_in</md-icon></md-button>
-          <md-button class="md-primary" @click="closeDialog()">Cerrar<md-icon class="icon">close</md-icon></md-button>
-        </md-dialog-actions>
-    </md-dialog>
+  <md-dialog :md-active="showDialog">
+    <md-toolbar>
+      <h3 class="md-title" style="flex: 1"><md-icon class="icon">room</md-icon>{{infoDireccionComercial}}</h3>
+      <md-button class="md-icon-button"  @click="closeDialog()">
+        <md-icon>close</md-icon>
+      </md-button>
+    </md-toolbar>
+    <md-tabs md-dynamic-height>
+      <md-tab md-label="Información" class="contentScroll" md-icon="description">
+        <div class="md-layout">
+            <div class="md-layout-item md-size-100">
+              <md-subheader>
+                <md-icon class="icon">map</md-icon>Ubicacion 
+                <md-chip class="md-primary chip"  @click="zoomClick()">
+                  <md-icon class="icon">zoom_in</md-icon>
+                  <md-tooltip md-direction="top">Acercar en el mapa</md-tooltip>
+                </md-chip>
+              </md-subheader>
+              <b>Ciudad:</b> {{infoCiudad}} <br>
+              <b>Colonia:</b> {{infoColonia_comercial}} <br>
+              <b>Delegacion o municipio:</b> {{infoDelegacion}}
+              <md-divider></md-divider>
+            </div>
+            <div v-if="authenticated" class="md-layout-item md-xsmall-size-100 md-small-size-50">
+              <md-subheader><md-icon class="icon">assignment</md-icon>Especificaciones</md-subheader>
+              <b>Formato:</b> {{infoFormato}} <br>
+              <b>Tipo de lona:</b> {{infoTipoLona}} <br>
+              <b>Vista:</b> {{infoVista}}
+              <md-divider class="smshow"></md-divider>
+            </div>
+            <div v-if="authenticated" class="md-layout-item md-xsmall-size-100 md-small-size-50">
+              <md-subheader><md-icon class="icon">aspect_ratio</md-icon>Medidas</md-subheader>
+              <span v-if="infoAltura"><b>Altura:</b> {{infoAltura}}</span> <br>
+              <span v-if="infoBase"><b>Base:</b> {{infoBase}}</span> <br>
+              <span v-if="infoSuperficie"><b>Superficie:</b> {{infoSuperficie}}</span>
+            </div>
+        </div>
+        <div v-if="!authenticated" class="md-layout md-gutter">
+            <div class="md-layout-item md-size-100">
+              <md-subheader><md-icon class="icon">lock</md-icon>Ingresar<br>
+              (Accede o registrate para ver mas detalles)
+              </md-subheader>
+            </div>
+            <div class="md-layout-item md-xsmall-size-100 md-small-size-50">
+              <md-field>
+                <label>Usuario</label>
+                <md-input></md-input>
+              </md-field>
+            </div>
+            <div class="md-layout-item md-xsmall-size-100 md-small-size-50">
+              <md-field>
+                <label>Contraseña</label>
+                <md-input type="password"></md-input>
+              </md-field>
+            </div>
+        </div>
+        <div v-if="!authenticated" class="md-layout">
+            <div class="md-layout-item md-size-100 alignright">
+              <a href="/registrate">
+                <md-button class="md-raised">Registrate<md-icon class="icon">person_add</md-icon></md-button>
+              </a>
+              <a href="/ingresar">
+                <md-button class="md-raised md-primary">Ingresar<md-icon class="icon">login</md-icon></md-button>
+              </a>
+            </div>
+        </div>
+      </md-tab>
+      <md-tab md-label="Vista de calle" class="contentScroll" md-icon="streetview">
+        <gmap-street-view-panorama class="pano"
+        :pov="{heading: 0, pitch: 0}"
+        :position="{lat: Number(this.lat),lng: Number(this.lng)}"
+        :zoom="1" >
+        </gmap-street-view-panorama>
+      </md-tab>
+    </md-tabs>
+    <md-dialog-actions>
+      <!--md-button class="md-raised md-primary" @click="zoomClick()">Acercarse<md-icon class="icon">zoom_in</md-icon></md-button-->
+      <!--md-button class="md-raised md-accent" @click="closeDialog()">Cerrar<md-icon class="icon">close</md-icon></md-button-->
+    </md-dialog-actions>
+  </md-dialog>
 </template>
 <script>
 export default {
@@ -38,7 +86,8 @@ export default {
   props: {
     zoom: Number,
     marker: String,
-    markers:Array
+    markers:Array,
+    authenticated: Boolean
   },
   data:() => ({
     showDialog: true,
@@ -98,7 +147,6 @@ export default {
         this.lat=this.currentUbication.lat
         this.lng=this.currentUbication.lng
       }
-     
   }
 }
 </script>
@@ -118,6 +166,9 @@ li {
 a {
   color: #42b983;
 }
+.alignright{
+  text-align: right;
+}
 .map{
   width: 100vw;
   height: 75vh;
@@ -129,7 +180,6 @@ a {
 .md-subheader{
   padding: 0;
 }
-
 .pano {
   width: 100%;
   height: 50vh;
@@ -138,7 +188,43 @@ a {
   width: 70vw;
 }
 #dialog{
-  background-color: blanchedalmond;
+  background-color: white;
   z-index: 1000;
+}
+.contentScroll {
+    overflow-x:visible;
+}
+.md-tabs-navigation .md-icon{
+    display: none!important;
+}
+.smshow {
+  display: none;
+}
+.dialogTitle {
+    width: 100%;
+}
+.chip{
+  margin-left: 10px;
+
+  i{
+    color: white!important;
+    margin: 0!important;
+  }
+}
+@media only screen and (min-width: 600px) {
+  .pano {
+    height: 40vh;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .smhide {
+    display: none;
+  }
+  .smshow {
+    display: block!important;
+  }
+  .dialogTitle{
+    font-size: 14px;
+  }
 }
 </style>
