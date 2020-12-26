@@ -57,12 +57,10 @@
         </div>
         <div v-if="!authenticated" class="md-layout">
             <div class="md-layout-item md-size-100 alignright">
-              <a href="/registrate">
-                <md-button class="md-raised">Registrate<md-icon class="icon">person_add</md-icon></md-button>
-              </a>
+             
                 <md-button :disabled="loginwait" class="md-raised md-primary" @click="doLogin()">Ingresar
                   <md-icon class="icon" v-if="!loginwait">login</md-icon>
-                <md-progress-spinner v-if="loginwait" class="md-accent" :md-diameter="15" md-stroke="2" md-mode="indeterminate"></md-progress-spinner>
+                <md-progress-spinner v-if="loginwait" class="md-accent" :md-diameter="15" md-stroke=2 md-mode="indeterminate"></md-progress-spinner>
                 </md-button>
             </div>
             <div class="md-layout-item md-size-100 alignright">
@@ -71,6 +69,7 @@
               </md-chip>
             </div>
         </div>
+
       </md-tab>
       <md-tab md-label="Vista de calle" class="contentScroll" md-icon="streetview">
         <gmap-street-view-panorama class="pano"
@@ -81,8 +80,10 @@
       </md-tab>
     </md-tabs>
     <md-dialog-actions>
-      <!--md-button class="md-raised md-primary" @click="zoomClick()">Acercarse<md-icon class="icon">zoom_in</md-icon></md-button-->
-      <!--md-button class="md-raised md-accent" @click="closeDialog()">Cerrar<md-icon class="icon">close</md-icon></md-button-->
+     <a href="/registrate"  v-if="!authenticated">
+        <md-button class="md-raised">Registrate<md-icon class="icon">person_add</md-icon></md-button>
+      </a>
+      <md-button v-if="authenticated" class="md-raised  md-primary">Descarga Ficha<md-icon class="icon">picture_as_pdf</md-icon></md-button>
     </md-dialog-actions>
   </md-dialog>
 </template>
@@ -99,7 +100,7 @@ export default {
     zoom: Number,
     marker: String,
     markers:Array,
-    authenticated: Boolean
+    authenticated: String
   },
   data:() => ({
     showDialog: true,

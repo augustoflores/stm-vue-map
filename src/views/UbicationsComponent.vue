@@ -55,7 +55,7 @@
       this.authenticated=this.$session.get('authenticated')
     },
     beforeMount() {
-      this.axios.get("/ubicaciones.json").then(response => {
+      this.axios.get("http://devel.sotmedia.com.mx/wp-json/wp/v2/ubicacion?per_page=100").then(response => {
         this.isLoaded = true;
         this.markers = response.data
       })
