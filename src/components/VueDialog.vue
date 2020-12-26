@@ -57,11 +57,11 @@
             </div>
         </div>
         <div v-if="!authenticated" class="md-layout">
-            <div class="md-layout-item md-size-100 alignright">       
-                <md-button :disabled="loginwait" class="md-raised md-primary" @click="doLogin()">Ingresar
-                  <md-icon class="icon" v-if="!loginwait">login</md-icon>
-                <md-progress-spinner v-if="loginwait" class="md-accent" :md-diameter="15" md-stroke=2 md-mode="indeterminate"></md-progress-spinner>
-                </md-button>
+            <div class="md-layout-item md-size-100 alignright">
+              <md-button :disabled="loginwait" class="md-raised md-primary" @click="doLogin()">Ingresar
+                <md-icon class="icon" v-if="!loginwait">login</md-icon>
+              <md-progress-spinner v-if="loginwait" class="md-accent" :md-diameter="15" md-stroke=2 md-mode="indeterminate"></md-progress-spinner>
+              </md-button>
             </div>
             <div class="md-layout-item md-size-100 alignright">
               <md-chip class="md-accent" v-if="loginerror">
@@ -79,8 +79,11 @@
       </md-tab>
     </md-tabs>
     <md-dialog-actions>
-     <a href="/registrate"  v-if="!authenticated">
-        <md-button class="md-raised">Registrate<md-icon class="icon">person_add</md-icon></md-button>
+      <a href="/ingresar/olvide-contrasena/"  class="link"  v-if="!authenticated">
+        Olvide Contraseña <md-icon class="icon">person_search</md-icon>
+      </a> 
+      <a href="/registrate" class="link" v-if="!authenticated">
+        Registrate <md-icon class="icon">person_add</md-icon>
       </a>
       <md-button @click="downloadPDF()" v-if="authenticated" class="md-raised  md-primary">Descarga Ficha<md-icon class="icon">picture_as_pdf</md-icon></md-button>
     </md-dialog-actions>
@@ -90,19 +93,26 @@
         :float-layout="true"
         :enable-download="true"
         :paginate-elements-by-height="1400"
-        :filename="infoDireccionComercial"
+        filename="ficha"
         :pdf-quality="2"
         :manual-pagination="false"
         pdf-format="letter"
-        :html-to-pdf-options={margin:20}
+        :html-to-pdf-options={margin:20,filename:infoDireccionComercial}
         pdf-orientation="portrait"
         pdf-content-width="800px"
         ref="html2Pdf"
     >
         <section slot="pdf-content">
           <div class="md-layout">
-          <h3 class="md-title"><md-icon class="icon">room</md-icon>{{infoDireccionComercial}}</h3>
+            <div  class="md-layout-item md-size-50">
+              <img src="../assets/sotmedia.png" width="150">
+            </div>
+            <div  class="md-layout-item md-size-50">
+              <vue-qrcode :value="'devel.sotmedia.com.mx/mapa/#/'+currentUbication.id" />
+            </div>
             <div class="md-layout-item md-size-100">
+              <h3 class="md-title"><md-icon class="icon">room</md-icon>{{infoDireccionComercial}}</h3>
+            <md-divider></md-divider>
               <md-subheader>
                 <md-icon class="icon">map</md-icon>Ubicacion 
               </md-subheader>
@@ -123,8 +133,16 @@
               <span v-if="infoAltura"><b>Altura:</b> {{infoAltura}}</span> <br>
               <span v-if="infoBase"><b>Base:</b> {{infoBase}}</span> <br>
               <span v-if="infoSuperficie"><b>Superficie:</b> {{infoSuperficie}}</span>
+              <md-divider></md-divider>
             </div>
-        </div>
+            <div  class="md-layout-item md-size-40">
+            </div>
+            <div  class="md-layout-item md-size-60">
+              <a :href="'devel.sotmedia.com.mx/mapa/#/'+currentUbication.id">
+                devel.sotmedia.com.mx/mapa/#/{{currentUbication.id}} 
+              </a>
+            </div>
+          </div>    
         </section>
     </vue-html2pdf>
 </div>
@@ -135,13 +153,16 @@ import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueHtml2pdf from 'vue-html2pdf'
+import VueQrcode from 'vue-qrcode'
 
-Vue.use(VueAxios, axios, VueHtml2pdf)
+
+Vue.use(VueAxios, axios, VueHtml2pdf, VueQrcode)
 
 export default {
   name: 'VueDialog',
   components: {
-      VueHtml2pdf
+      VueHtml2pdf,
+      VueQrcode
   },
   props: {
     zoom: Number,
@@ -290,6 +311,11 @@ a {
   i{
     color: white!important;
     margin: 0!important;
+  }
+}
+.link{
+  :hover{
+    text-decoration: none;
   }
 }
 @media only screen and (min-width: 600px) {
