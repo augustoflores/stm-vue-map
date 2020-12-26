@@ -1,4 +1,5 @@
 <template>
+<div>
   <md-dialog :md-active="showDialog">
     <md-toolbar>
       <h3 class="md-title" style="flex: 1"><md-icon class="icon">room</md-icon>{{infoDireccionComercial}}</h3>
@@ -56,8 +57,7 @@
             </div>
         </div>
         <div v-if="!authenticated" class="md-layout">
-            <div class="md-layout-item md-size-100 alignright">
-             
+            <div class="md-layout-item md-size-100 alignright">       
                 <md-button :disabled="loginwait" class="md-raised md-primary" @click="doLogin()">Ingresar
                   <md-icon class="icon" v-if="!loginwait">login</md-icon>
                 <md-progress-spinner v-if="loginwait" class="md-accent" :md-diameter="15" md-stroke=2 md-mode="indeterminate"></md-progress-spinner>
@@ -69,7 +69,6 @@
               </md-chip>
             </div>
         </div>
-
       </md-tab>
       <md-tab md-label="Vista de calle" class="contentScroll" md-icon="streetview">
         <gmap-street-view-panorama class="pano"
@@ -83,19 +82,67 @@
      <a href="/registrate"  v-if="!authenticated">
         <md-button class="md-raised">Registrate<md-icon class="icon">person_add</md-icon></md-button>
       </a>
-      <md-button v-if="authenticated" class="md-raised  md-primary">Descarga Ficha<md-icon class="icon">picture_as_pdf</md-icon></md-button>
+      <md-button @click="downloadPDF()" v-if="authenticated" class="md-raised  md-primary">Descarga Ficha<md-icon class="icon">picture_as_pdf</md-icon></md-button>
     </md-dialog-actions>
   </md-dialog>
+  <vue-html2pdf
+        :show-layout="false"
+        :float-layout="true"
+        :enable-download="true"
+        :paginate-elements-by-height="1400"
+        :filename="infoDireccionComercial"
+        :pdf-quality="2"
+        :manual-pagination="false"
+        pdf-format="letter"
+        :html-to-pdf-options={margin:20}
+        pdf-orientation="portrait"
+        pdf-content-width="800px"
+        ref="html2Pdf"
+    >
+        <section slot="pdf-content">
+          <div class="md-layout">
+          <h3 class="md-title"><md-icon class="icon">room</md-icon>{{infoDireccionComercial}}</h3>
+            <div class="md-layout-item md-size-100">
+              <md-subheader>
+                <md-icon class="icon">map</md-icon>Ubicacion 
+              </md-subheader>
+              <b>Ciudad:</b> {{infoCiudad}} <br>
+              <b>Colonia:</b> {{infoColonia_comercial}} <br>
+              <b>Delegacion o municipio:</b> {{infoDelegacion}}
+              <md-divider></md-divider>
+            </div>
+            <div v-if="authenticated" class="md-layout-item md-size-100">
+              <md-subheader><md-icon class="icon">assignment</md-icon>Especificaciones</md-subheader>
+              <b>Formato:</b> {{infoFormato}} <br>
+              <b>Tipo de lona:</b> {{infoTipoLona}} <br>
+              <b>Vista:</b> {{infoVista}}
+              <md-divider></md-divider>
+            </div>
+            <div v-if="authenticated" class="md-layout-item md-size-100">
+              <md-subheader><md-icon class="icon">aspect_ratio</md-icon>Medidas</md-subheader>
+              <span v-if="infoAltura"><b>Altura:</b> {{infoAltura}}</span> <br>
+              <span v-if="infoBase"><b>Base:</b> {{infoBase}}</span> <br>
+              <span v-if="infoSuperficie"><b>Superficie:</b> {{infoSuperficie}}</span>
+            </div>
+        </div>
+        </section>
+    </vue-html2pdf>
+</div>
 </template>
 <script>
 
 import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-Vue.use(VueAxios, axios)
+import VueHtml2pdf from 'vue-html2pdf'
+
+Vue.use(VueAxios, axios, VueHtml2pdf)
 
 export default {
   name: 'VueDialog',
+  components: {
+      VueHtml2pdf
+  },
   props: {
     zoom: Number,
     marker: String,
@@ -177,6 +224,9 @@ export default {
           this.loginerror=true
           this.loginwait=false
         });
+      },
+      downloadPDF() {
+        this.$refs.html2Pdf.generatePdf()
       }
   }
 }
