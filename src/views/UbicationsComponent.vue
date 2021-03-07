@@ -8,7 +8,8 @@
         :infoFormato="infoFormato" :infoTipoLona="infoTipoLona" :centerLat="centerLat" :centerLng="centerLng"
         :zoom="zoom" :showDialog="showDialog" v-on:childToParent="onChildEvent" v-on:zoomToParent="onZoomEvent"
         v-on:zoomChangedToParent="onZoomChangedEvent" v-on:showDialogToParent="showDialogEvent"
-        v-on:tokenToParent="onTokenToParent" v-on:fullscreenToParent="toggle" :authenticated="authenticated"/>
+        v-on:tokenToParent="onTokenToParent" v-on:fullscreenToParent="toggle" :authenticated="authenticated"
+        :isList="isList"/>
     </div>
     <div class="filter">
       <VueFilter :infoDireccionComercial="infoDireccionComercial" :infoFormato="infoFormato"
@@ -30,7 +31,10 @@
     name: 'UbicationsComponent',
     components: {
       VueMap,
-      VueFilter
+      VueFilter,
+    },
+    props:{
+      isList:Boolean,
     },
     data: function () {
       return {

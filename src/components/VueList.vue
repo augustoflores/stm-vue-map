@@ -1,12 +1,17 @@
 <template>
     <div class="lista">
       Aca la Lista
+       <div :key="index" v-for="(m, index) in markers" :position="{lat:Number(m.lat), lng:Number(m.lng)}"
+           @click="ubicationClick(m)">
+            {{m.direccion_comercial}}
+        </div>
     </div>
 </template>
 <script>
 export default {
   name: 'VueList',
   props: {
+    markers: Array
   },
   data:() => ({
   }),

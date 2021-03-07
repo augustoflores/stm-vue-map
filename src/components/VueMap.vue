@@ -1,7 +1,7 @@
 <template>
   <div class="map">
     <router-view name="ficha" :authenticated="authenticated" :markers="markers" :marker="marker" v-on:zoomToParent="onZoomEvent"  v-on:tokenToParent="onTokenToParent"/>
-    <GmapMap style="width: 100%; height: 100%;"  :options="{
+    <GmapMap v-if="!isList" style="width: 100%; height: 100%;"  :options="{
         zoomControl: true,
         mapTypeControl: true,
         scaleControl: true,
@@ -22,7 +22,7 @@
         </GmapMarker>
       </gmap-cluster>
     </GmapMap>
-    <VueList/>
+    <VueList v-if="isList" :markers="markers" />
     <a href="/">
       <md-speed-dial class="home" md-direction="bottom">
         <md-speed-dial-target class="md-accent">
@@ -70,6 +70,7 @@
       showSnackbar: Boolean,
       showDialog: Boolean,
       authenticated: Object,
+      isList:Boolean
     },
     data: () => ({
       fullscreen: false,

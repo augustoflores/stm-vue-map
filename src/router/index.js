@@ -16,6 +16,9 @@ const routes = [
     path: '/',
     name: 'Ubicaciones',
     component: UbicationsComponent,
+    props:{
+      isList:false,
+    },
     children: [
       {
         path: '/ubicacion/:marker',
@@ -25,13 +28,16 @@ const routes = [
           default: true,
           ficha:true
         },
-      }
+      },
     ]
   },
   {
-    path: '/listado/',
+    path: '/listado',
     name: 'Listado',
     component: UbicationsComponent,
+    props: {
+      isList:true,
+    }
   }
 
 ]
