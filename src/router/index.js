@@ -18,7 +18,7 @@ const routes = [
     component: UbicationsComponent,
     children: [
       {
-        path: '/:marker',
+        path: '/ubicacion/:marker',
         name: 'Ubicacion',
         components: {ficha:VueDialog},
         props: {
@@ -27,8 +27,12 @@ const routes = [
         },
       }
     ]
-
   },
+  {
+    path: '/listado/',
+    name: 'Listado',
+    component: UbicationsComponent,
+  }
 
 ]
 const router = new VueRouter({

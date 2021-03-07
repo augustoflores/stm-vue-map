@@ -145,7 +145,7 @@
             <div  class="md-layout-item md-size-40">
             </div>
             <div  class="md-layout-item md-size-60">
-              <a :href="'devel.sotmedia.com.mx/mapa/#/'+currentUbication.id">
+              <a :href="'devel.sotmedia.com.mx/mapa/#/ubicacion/'+currentUbication.id">
                 devel.sotmedia.com.mx/mapa/#/{{currentUbication.id}} 
               </a>
             </div>

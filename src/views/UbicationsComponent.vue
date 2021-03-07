@@ -54,6 +54,7 @@
     },
     mounted(){
       var now= new Date()
+      console.log("json",Vue.localStorage.get('authenticated',null))
       var auth=JSON.parse(Vue.localStorage.get('authenticated',null))
       if(auth!=null){
         if(now>auth.expiration){

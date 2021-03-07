@@ -22,12 +22,13 @@
         </GmapMarker>
       </gmap-cluster>
     </GmapMap>
+    <VueList/>
     <a href="/">
-    <md-speed-dial class="home" md-direction="bottom">
-      <md-speed-dial-target class="md-accent">
-        <md-icon>close</md-icon>
-      </md-speed-dial-target>
-    </md-speed-dial>
+      <md-speed-dial class="home" md-direction="bottom">
+        <md-speed-dial-target class="md-accent">
+          <md-icon>close</md-icon>
+        </md-speed-dial-target>
+      </md-speed-dial>
     </a>
     <md-speed-dial class="currentPosition" md-direction="bottom">
       <md-speed-dial-target class="md-primary" v-on:click="geolocation()">
@@ -48,11 +49,14 @@
   import axios from 'axios'
   import VueAxios from 'vue-axios'
   import GoogleMapCluster from 'vue2-google-maps/dist/components/cluster'
+  import VueList from '@/components/VueList.vue'
   Vue.component('gmap-cluster', GoogleMapCluster);
   Vue.use(VueAxios, axios)
   export default {
     name: 'VueMap',
-    components: {},
+    components: {
+      VueList
+    },
     props: {
       texto: String,
       markers: Array,
@@ -91,7 +95,7 @@
     },
     methods: {
       ubicationClick: function (info) {
-        this.$router.push("/" + info.id)
+        this.$router.push("/ubicacion/" + info.id)
 
       },
 
