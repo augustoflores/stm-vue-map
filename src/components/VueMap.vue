@@ -96,7 +96,7 @@
     },
     methods: {
       ubicationClick: function (info) {
-        this.$router.push("/ubicacion/" + info.id)
+        this.$router.push("/mapa/ubicacion/" + info.id)
 
       },
 
