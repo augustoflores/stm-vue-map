@@ -18,49 +18,54 @@
                   <md-tooltip md-direction="top">Acercar en el mapa</md-tooltip>
                 </md-chip>
               </md-subheader>
-              <b>Ciudad:</b> {{infoCiudad}} <br>
-              <b>Colonia:</b> {{infoColonia_comercial}} <br>
-              <b>Delegacion o municipio:</b> {{infoDelegacion}}
+              <b>Edo.:</b> {{infoCiudad}} <br class=" md-xsmall-hide md-small-show">
+              <b>Col.:</b> {{infoColonia_comercial}} <br class="">
+              <b>Del. o Mpo.:</b> {{infoDelegacion}}
               <md-divider></md-divider>
             </div>
             <div v-if="authenticated" class="md-layout-item md-xsmall-size-100 md-small-size-50">
               <md-subheader><md-icon class="icon">assignment</md-icon>Especificaciones</md-subheader>
-              <b>Formato:</b> {{infoFormato}} <br>
-              <b>Tipo de lona:</b> {{infoTipoLona}} <br>
+              <b>Formato:</b> {{infoFormato}} <br class=" md-xsmall-hide md-small-show">
+              <b>Tipo de lona:</b> {{infoTipoLona}} <br class="">
               <b>Vista:</b> {{infoVista}}
               <md-divider class="smshow"></md-divider>
             </div>
             <div v-if="authenticated" class="md-layout-item md-xsmall-size-100 md-small-size-50">
               <md-subheader><md-icon class="icon">aspect_ratio</md-icon>Medidas</md-subheader>
-              <span v-if="infoAltura"><b>Altura:</b> {{infoAltura}}</span> <br>
-              <span v-if="infoBase"><b>Base:</b> {{infoBase}}</span> <br>
+              <span v-if="infoAltura"><b>Altura:</b> {{infoAltura}}</span> <br class=" md-xsmall-hide md-small-show">
+              <span v-if="infoBase"><b>Base:</b> {{infoBase}}</span> <br class=" md-xsmall-hide md-small-show">
               <span v-if="infoSuperficie"><b>Superficie:</b> {{infoSuperficie}}</span>
             </div>
         </div>
-        <div v-if="!authenticated" class="md-layout md-gutter">
-            <div class="md-layout-item md-size-100">
-              <md-subheader><md-icon class="icon">lock</md-icon>Ingresar<br>
-              (Accede o registrate para ver mas detalles)
-              </md-subheader>
-            </div>
-            <div class="md-layout-item md-xsmall-size-100 md-small-size-50">
-              <md-field>
-                <label>Usuario</label>
-                <md-input v-model="username"></md-input>
-              </md-field>
-            </div>
-            <div class="md-layout-item md-xsmall-size-100 md-small-size-50">
-              <md-field>
-                <label>Contraseña</label>
-                <md-input v-model="password" type="password"></md-input>
-              </md-field>
-            </div>
-        </div>
+        <form novalidate  @submit.prevent="validateUser">
+          <div v-if="!authenticated" class="md-layout md-gutter">
+              <div class="md-layout-item md-size-100">
+                <md-subheader><md-icon class="icon">lock</md-icon>Ingresar<br>
+                (Accede o registrate para ver mas detalles)
+                </md-subheader>
+              </div>
+              <div class="md-layout-item md-xsmall-size-100 md-small-size-50">
+                <md-field :class="getValidationClass('username')">
+                  <label>Correo</label>
+                  <md-input v-model="form.username"></md-input>
+                  <span class="md-error" v-if="!$v.form.username.required">Introduce tu correo</span>
+                  <span class="md-error" v-else-if="!$v.form.username.email">Introduzca un correo valido</span>
+                </md-field>
+              </div>
+              <div class="md-layout-item md-xsmall-size-100 md-small-size-50">
+                <md-field :class="getValidationClass('password')">
+                  <label>Contraseña</label>
+                  <md-input v-model="form.password" type="password" @keyup.enter="validateUser()"></md-input>
+                  <span class="md-error" v-if="!$v.form.password.required">Introduce tu contraseña</span>
+                </md-field>
+              </div>
+          </div>
+        </form>
         <div v-if="!authenticated" class="md-layout">
             <div class="md-layout-item md-size-100 alignright">
-              <md-button :disabled="loginwait" class="md-raised md-primary" @click="doLogin()">Ingresar
+              <md-button :disabled="loginwait" class="md-raised md-primary" @click="validateUser()">Ingresar
                 <md-icon class="icon" v-if="!loginwait">login</md-icon>
-              <md-progress-spinner v-if="loginwait" class="md-accent" :md-diameter="15" md-stroke=2 md-mode="indeterminate"></md-progress-spinner>
+              <md-progress-spinner v-if="loginwait" class="md-accent" :md-diameter="15" :md-stroke="2" md-mode="indeterminate"></md-progress-spinner>
               </md-button>
             </div>
             <div class="md-layout-item md-size-100 alignright">
@@ -69,6 +74,7 @@
               </md-chip>
             </div>
         </div>
+        
       </md-tab>
       <md-tab md-label="Vista de calle" class="contentScroll" md-icon="streetview">
         <gmap-street-view-panorama class="pano"
@@ -101,11 +107,12 @@
         pdf-orientation="portrait"
         pdf-content-width="800px"
         ref="html2Pdf"
+        v-if="authenticated"
     >
         <section slot="pdf-content">
           <div class="md-layout">
             <div  class="md-layout-item md-size-50">
-              <img src="../assets/sotmedia.png" width="150">
+              <img src="../assets/sotmedia.png" width="200">
             </div>
             <div  class="md-layout-item md-size-50">
               <vue-qrcode :value="'devel.sotmedia.com.mx/mapa/#/'+currentUbication.id" />
@@ -116,19 +123,19 @@
               <md-subheader>
                 <md-icon class="icon">map</md-icon>Ubicacion 
               </md-subheader>
-              <b>Ciudad:</b> {{infoCiudad}} <br>
-              <b>Colonia:</b> {{infoColonia_comercial}} <br>
-              <b>Delegacion o municipio:</b> {{infoDelegacion}}
+              <b>Edo.:</b> {{infoCiudad}} <br>
+              <b>Col.:</b> {{infoColonia_comercial}} <br>
+              <b>Del. o Mpo.:</b> {{infoDelegacion}}
               <md-divider></md-divider>
             </div>
-            <div v-if="authenticated" class="md-layout-item md-size-100">
+            <div  class="md-layout-item md-size-100">
               <md-subheader><md-icon class="icon">assignment</md-icon>Especificaciones</md-subheader>
               <b>Formato:</b> {{infoFormato}} <br>
               <b>Tipo de lona:</b> {{infoTipoLona}} <br>
               <b>Vista:</b> {{infoVista}}
               <md-divider></md-divider>
             </div>
-            <div v-if="authenticated" class="md-layout-item md-size-100">
+            <div class="md-layout-item md-size-100">
               <md-subheader><md-icon class="icon">aspect_ratio</md-icon>Medidas</md-subheader>
               <span v-if="infoAltura"><b>Altura:</b> {{infoAltura}}</span> <br>
               <span v-if="infoBase"><b>Base:</b> {{infoBase}}</span> <br>
@@ -154,12 +161,17 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueHtml2pdf from 'vue-html2pdf'
 import VueQrcode from 'vue-qrcode'
-
+import { validationMixin } from 'vuelidate'
+import {
+    required,
+    email,
+} from 'vuelidate/lib/validators'
 
 Vue.use(VueAxios, axios, VueHtml2pdf, VueQrcode)
 
 export default {
   name: 'VueDialog',
+  mixins: [validationMixin],
   components: {
       VueHtml2pdf,
       VueQrcode
@@ -168,7 +180,7 @@ export default {
     zoom: Number,
     marker: String,
     markers:Array,
-    authenticated: String
+    authenticated: Object
   },
   data:() => ({
     showDialog: true,
@@ -186,16 +198,29 @@ export default {
     infoVista: "-",
     lat:0,
     lng:0,
-    username:'',
-    password:'',
+    form:{
+      username:'',
+      password:'',
+    },
     loginerror:false,
     loginwait: false
   }),
   mounted() {
     this.getUbication(this.$route.params.marker)
   },
+  validations: {
+      form: {
+        username: {
+          required,
+          email
+        },
+        password: {
+          required,
+        },
+      }
+    },
    methods: {
-     close () {
+    close () {
       this.$router.back()
       this.showDialog = false
     },      
@@ -236,18 +261,33 @@ export default {
         this.loginerror=false
         this.loginwait=true
         axios.post('https://devel.sotmedia.com.mx/wp-json/jwt-auth/v1/token', {
-          username: this.username,
-          password: this.password
+          username: this.form.username,
+          password: this.form.password
         }).then(response => {
-          this.$session.set('authenticated', response.data.token);
           this.$emit("tokenToParent", this.authenticated=response.data.token) ;
-        }).catch(function () {
+        }).catch((error) => {
+          console.warn(error)
           this.loginerror=true
           this.loginwait=false
         });
       },
       downloadPDF() {
         this.$refs.html2Pdf.generatePdf()
+      },
+      getValidationClass (fieldName) {
+        const field = this.$v.form[fieldName]
+        if (field) {
+          return {
+            'md-invalid': field.$invalid && field.$dirty
+          }
+        }
+      },
+      validateUser () {
+        this.$v.$touch()
+
+        if (!this.$v.$invalid) {
+          this.doLogin()
+        }
       }
   }
 }
@@ -313,10 +353,8 @@ a {
     margin: 0!important;
   }
 }
-.link{
-  :hover{
-    text-decoration: none;
-  }
+.link:hover{
+  text-decoration: none;
 }
 @media only screen and (min-width: 600px) {
   .pano {

@@ -3,7 +3,6 @@
     <a href="/">
       <img src="../assets/sotmedia.png" class="logo">
     </a>
-
     <div class="md-layout-item col md-xsmall-size-100 md-medium-size-100 map">
       <VueMap v-if="isLoaded" :markers="filterMarkers()" :infoDireccionComercial="infoDireccionComercial"
         :infoFormato="infoFormato" :infoTipoLona="infoTipoLona" :centerLat="centerLat" :centerLng="centerLng"
@@ -23,8 +22,10 @@
 </template>
 <script>
   // @ is an alias to /src
+  import Vue from 'vue'
   import VueMap from '@/components/VueMap.vue'
   import VueFilter from '@/components/VueFilter.vue'
+
   export default {
     name: 'UbicationsComponent',
     components: {
@@ -52,7 +53,20 @@
       }
     },
     mounted(){
-      this.authenticated=this.$session.get('authenticated')
+      var now= new Date()
+      var auth=JSON.parse(Vue.localStorage.get('authenticated',null))
+      if(auth!=null){
+        if(now>auth.expiration){
+          auth=null
+          Vue.localStorage.set('authenticated','')
+        }
+      }
+      this.authenticated=auth
+      if(this.hasClass(document.body,"logged-in") && Vue.localStorage.get('authenticated')==null){
+          var expDate =new Date(now.setHours(now.getHours() + 1 ))
+          this.authenticated = {token:'wordpress-logged', expiration:expDate}
+          //Vue.localStorage.set('authenticated',JSON.stringify(this.authenticated))
+      }
     },
     beforeMount() {
       this.axios.get("http://devel.sotmedia.com.mx/wp-json/wp/v2/ubicacion?per_page=100").then(response => {
@@ -65,7 +79,6 @@
         this.showDialog = dialog.dialogvisible
       },
       onZoomEvent(value) {
-        console.log(value)
         this.zoom = value.zoom;
         this.centerLat = Number(value.centerLat);
         this.centerLng = Number(value.centerLng);
@@ -81,7 +94,6 @@
         this.showSnackbar = info.showSnackbar
       },
       onFilterPlaceEvent(place) {
-        console.log(place.search);
         this.centerLat = place.centerLat
         this.centerLng = place.centerLng
         this.zoom = 13
@@ -94,7 +106,10 @@
         this.filtrosTipo = value.tipo;
       },
       onTokenToParent(value){
-          this.authenticated = value;
+          var now = new Date()
+          var expDate =new Date(now.setHours(now.getHours() + 1 ))
+          this.authenticated = {token:value, expiration:expDate}
+          Vue.localStorage.set('authenticated',JSON.stringify(this.authenticated))
       },
       filterMarkers() {
         var filtrosTipo = this.filtrosTipo;
@@ -116,6 +131,13 @@
         this.$emit('fullscreenToParent', {
           val: true,
         })
+      },
+      hasClass(ele,cls) {
+        var value=ele.className.indexOf(cls)
+        if(value>-1){
+          return true
+        }
+        return false
       }
     },
   }

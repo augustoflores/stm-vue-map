@@ -18,7 +18,8 @@
       }" :zoom="zoom" :center="{lat: centerLat, lng: centerLng}" ref="myMapRef" @zoom_changed="zoomChanged">
       <gmap-cluster :gridSize="30" :zoomOnClick="true" :minimumClusterSize="2" :maxZoom="15">
         <GmapMarker :key="index" v-for="(m, index) in markers" :position="{lat:Number(m.lat), lng:Number(m.lng)}"
-          :clickable="true" @mouseover="ubicationOver(m)" @mouseout="ubicationOut(m)" @click="ubicationClick(m)" />
+          :clickable="true" @mouseover="ubicationOver(m)" @mouseout="ubicationOut(m)" @click="ubicationClick(m)">
+        </GmapMarker>
       </gmap-cluster>
     </GmapMap>
     <a href="/">
@@ -64,7 +65,7 @@
       infoTipoLona: String,
       showSnackbar: Boolean,
       showDialog: Boolean,
-      authenticated: String,
+      authenticated: Object,
     },
     data: () => ({
       fullscreen: false,

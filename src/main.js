@@ -6,7 +6,9 @@ import App from './App.vue'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import './registerServiceWorker'
 import router from './router'
-import VueSessionStorage from 'vue-sessionstorage'
+import VueLocalStorage from 'vue-localstorage'
+
+//import VueSessionStorage from 'vue-sessionstorage'
 
 Vue.use(VueMaterial)
 Vue.use(VueGoogleMaps, {
@@ -18,7 +20,9 @@ Vue.use(VueGoogleMaps, {
     v: '3.26',
   },
 })
-Vue.use(VueSessionStorage)
+Vue.use(VueLocalStorage)
+
+//Vue.use(VueSessionStorage)
 
 
 Vue.config.productionTip = false
