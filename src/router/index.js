@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import UbicationsComponent from '@/views/UbicationsComponent'
-//import listComponent from '@/views/ListComponent'
 import VueDialog from '@/components/VueDialog'
+//import listComponent from '@/views/ListComponent'
 //import VueTemplate from '@/components/VueTemplate'
 
 Vue.use(VueRouter)
@@ -11,10 +11,10 @@ const routes = [
   {
     path: '*',
     name: 'Invalid',
-    redirect: '/mapa',
+    redirect: '/',
   },
   {
-    path: '/mapa',
+    path: '/',
     name: 'Ubicaciones',
     component: UbicationsComponent,
     props:{
@@ -22,7 +22,7 @@ const routes = [
     },
     children: [
       {
-        path: '/mapa/ubicacion/:marker',
+        path: '/ubicacion/:marker',
         name: 'Ubicacion',
         components: {ficha:VueDialog},
         props: {

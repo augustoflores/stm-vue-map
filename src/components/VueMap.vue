@@ -1,7 +1,7 @@
 <template>
   <div class="map">
     <router-view name="ficha" :authenticated="authenticated" :markers="markers" :marker="marker" v-on:zoomToParent="onZoomEvent"  v-on:tokenToParent="onTokenToParent"/>
-    <GmapMap v-if="!isList" style="width: 100%; height: 100%;"  :options="{
+    <GmapMap  style="width: 100%; height: 100%;"  :options="{
         zoomControl: true,
         mapTypeControl: true,
         scaleControl: true,
@@ -96,7 +96,7 @@
     },
     methods: {
       ubicationClick: function (info) {
-        this.$router.push("/mapa/ubicacion/" + info.id)
+        this.$router.push("/ubicacion/" + info.id)
 
       },
 
