@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import UbicationsComponent from '@/views/UbicationsComponent'
 import VueDialog from '@/components/VueDialog'
+import VuePauta from '@/components/VuePauta'
+
 //import listComponent from '@/views/ListComponent'
 //import VueTemplate from '@/components/VueTemplate'
 
@@ -18,9 +20,17 @@ const routes = [
     name: 'Ubicaciones',
     component: UbicationsComponent,
     props:{
-      isList:false,
+      //isList:false,
     },
     children: [
+      {
+        path: '/pauta/:markers',
+        name: 'Pauta',
+        components: {ficha:VuePauta},
+        props: {
+          default: true,
+        },
+      },
       {
         path: '/ubicacion/:marker',
         name: 'Ubicacion',
@@ -32,7 +42,7 @@ const routes = [
       },
     ]
   },
-  {
+  /*{
     path: '/listado',
     name: 'Listado',
     component: UbicationsComponent,
@@ -40,6 +50,16 @@ const routes = [
       isList:true,
     }
   },
+  {
+    path: '/listado/ubicacion/:marker',
+    name: 'Listado ubicacion',
+    component: UbicationsComponent,
+    props: {
+      isList:true,
+      default: true,
+      ficha:true
+    }
+  },*/
 
 ]
 const router = new VueRouter({

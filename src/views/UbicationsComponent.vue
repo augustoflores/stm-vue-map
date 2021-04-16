@@ -8,13 +8,23 @@
         :infoFormato="infoFormato" :infoTipoLona="infoTipoLona" :centerLat="centerLat" :centerLng="centerLng"
         :zoom="zoom" :showDialog="showDialog" v-on:childToParent="onChildEvent" v-on:zoomToParent="onZoomEvent"
         v-on:zoomChangedToParent="onZoomChangedEvent" v-on:showDialogToParent="showDialogEvent"
+        v-on:addPautaToParent="onAddPauta"
         v-on:tokenToParent="onTokenToParent" v-on:fullscreenToParent="toggle" :authenticated="authenticated"
-        :isList="isList"/>
+        :isList="isList"
+        :markersPauta="markersPauta"
+        />
     </div>
     <div class="filter">
       <VueFilter :infoDireccionComercial="infoDireccionComercial" :infoFormato="infoFormato"
         :infoTipoLona="infoTipoLona" :total="total" :search="search" v-on:filterPlaceToParent="onFilterPlaceEvent"
-        v-on:filterTipoToParent="onFilterTipoEvent" v-on:filterFormatoToParent="onFilterFormatoEvent" />
+        v-on:filterTipoToParent="onFilterTipoEvent" v-on:filterFormatoToParent="onFilterFormatoEvent"
+        v-on:listadoToParent="onListadoEvent"
+        v-on:pautaToParent="onPautaEvent"
+
+        :isList="isList"
+        :markersPauta="markersPauta"
+        :filteredMarkersPauta="filteredMarkersPauta"
+         />
     </div>
     <md-snackbar :md-duration="Infinity" :md-active.sync="showSnackbar">
       {{infoDireccionComercial}}, {{infoFormato}}, {{infoTipoLona}}
@@ -34,13 +44,15 @@
       VueFilter,
     },
     props:{
-      isList:Boolean,
-    },
+      },
     data: function () {
       return {
+        isList:false,
         isLoaded: false,
         menuVisible: true,
         markers: [],
+        markersPauta: [1111,1112],
+        filteredMarkersPauta: [],
         infoDireccionComercial: "String",
         infoFormato: "String",
         infoTipoLona: "String",
@@ -88,6 +100,7 @@
         this.centerLat = Number(value.centerLat);
         this.centerLng = Number(value.centerLng);
         this.showDialog = value.dialogvisible;
+        this.isList=false 
       },
       onZoomChangedEvent(value) {
         this.zoom = value.zoom;
@@ -116,6 +129,31 @@
           this.authenticated = {token:value, expiration:expDate}
           Vue.localStorage.set('authenticated',JSON.stringify(this.authenticated))
       },
+      onListadoEvent(value){
+        this.isList=value.isList        
+      },
+      onAddPauta(value){        
+        if (this.markersPauta.indexOf(value.id) === -1) {
+          this.markersPauta.push(value.id)
+        }
+        this.filterPautaMarkers()
+      },
+      onPautaEvent(value){     
+        if(value.isPauta){
+          this.filterPautaMarkers()
+        }
+      },
+      filterPautaMarkers() {
+        var markersPauta=this.markersPauta;
+        this.filteredMarkersPauta=this.markers.filter(function (elem) {
+            if(markersPauta.includes(elem.id)){
+              return true
+            }else{
+              return false
+            }
+          })
+      }
+      ,
       filterMarkers() {
         var filtrosTipo = this.filtrosTipo;
         var filtrosFormato = this.filtrosFormato;
@@ -153,6 +191,9 @@
     border: 1px solid rgba(#000, .12);
   }
 
+  .map{
+    z-index: 0;
+  }
   // Demo purposes only
   .md-drawer {
     width: 230px;
@@ -164,7 +205,7 @@
     left: 0px;
     bottom: 0px;
     width: 100vw;
-    height: 25vh;
+    height: 40vh;
   }
 
   .logo {
@@ -185,6 +226,7 @@
       width: 40vw;
       height: 30vh;
     } 
+
   }
 
   @media only screen and (min-width: 960px) {

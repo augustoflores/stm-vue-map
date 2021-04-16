@@ -1,7 +1,9 @@
 <template>
   <div class="map">
-    <router-view name="ficha" :authenticated="authenticated" :markers="markers" :marker="marker" v-on:zoomToParent="onZoomEvent"  v-on:tokenToParent="onTokenToParent"/>
-    <GmapMap  style="width: 100%; height: 100%;"  :options="{
+    <router-view name="ficha" :authenticated="authenticated" :markers="markers" :marker="marker"
+      v-on:zoomToParent="onZoomEvent" v-on:tokenToParent="onTokenToParent"
+       v-on:addPautaToParent="onAddPautaToParent" />
+    <GmapMap style="width: 100%; height: 100%;" :options="{
         zoomControl: true,
         mapTypeControl: true,
         scaleControl: true,
@@ -15,27 +17,29 @@
           latLngBounds: bounds,
           strictBounds: false,
         },
-      }" :zoom="zoom" :center="{lat: centerLat, lng: centerLng}" ref="myMapRef" @zoom_changed="zoomChanged">
-      <gmap-cluster :gridSize="30" :zoomOnClick="true" :minimumClusterSize="2" :maxZoom="15">
+      }" :zoom="zoom" :center="{lat: centerLat, lng: centerLng}" ref="myMapRef" @bounds_changed="boundsChanged"
+      @zoom_changed="zoomChanged">
+      <gmap-cluster :ignoreHidden=true :gridSize="30" :zoomOnClick="true" :minimumClusterSize="2" :maxZoom="15">
         <GmapMarker :key="index" v-for="(m, index) in markers" :position="{lat:Number(m.lat), lng:Number(m.lng)}"
-          :clickable="true" @mouseover="ubicationOver(m)" @mouseout="ubicationOut(m)" @click="ubicationClick(m)">
+          :title="m.direccion_comercial" :clickable="true" @mouseover="ubicationOver(m)" @mouseout="ubicationOut(m)"
+          @click="ubicationClick(m)">
         </GmapMarker>
       </gmap-cluster>
     </GmapMap>
-    <VueList v-if="isList" :markers="markers" />
-    <a href="/">
+    <VueList v-if="isList" :markers="visibleMarkers" />
+    <!--a href="/">
       <md-speed-dial class="home" md-direction="bottom">
         <md-speed-dial-target class="md-accent">
           <md-icon>close</md-icon>
         </md-speed-dial-target>
       </md-speed-dial>
-    </a>
-    <md-speed-dial class="currentPosition" md-direction="bottom">
+    </a-->
+    <md-speed-dial class="currentPosition" md-direction="bottom" v-if="!isList">
       <md-speed-dial-target class="md-primary" v-on:click="geolocation()">
         <md-icon>my_location</md-icon>
       </md-speed-dial-target>
     </md-speed-dial>
-    <md-speed-dial class="fullscreen" md-direction="bottom">
+    <md-speed-dial class="fullscreen" md-direction="bottom" v-if="!isList">
       <md-speed-dial-target class="md-primary" v-on:click="gotoFullscreen()">
         <md-icon v-if="!fullscreen">fullscreen</md-icon>
         <md-icon v-if="fullscreen">fullscreen_exit</md-icon>
@@ -70,11 +74,12 @@
       showSnackbar: Boolean,
       showDialog: Boolean,
       authenticated: Object,
-      isList:Boolean
+      isList: Boolean
     },
     data: () => ({
       fullscreen: false,
       currentUbication: {},
+      visibleMarkers: {},
       infoWindowPos: null,
       infoWinOpen: false,
       currentMidx: null,
@@ -92,7 +97,7 @@
       },
     }),
     mounted() {
-      
+
     },
     methods: {
       ubicationClick: function (info) {
@@ -125,6 +130,21 @@
           })
         });
       },
+      boundsChanged: function (value) {
+        //try{
+        if (value) {
+
+          this.visibleMarkers = this.markers.filter(function (currentValue) {
+            return value.contains({
+              "lat": Number(currentValue.lat),
+              "lng": Number(currentValue.lng)
+            })
+          })
+        }
+        //} catch(e){
+        //  console.warn("Bounds changin")
+        //} 
+      },
       zoomChanged: function (value) {
         this.$emit('zoomChangedToParent', {
           zoom: value,
@@ -137,15 +157,20 @@
           centerLng: value.lng,
         })
       },
-      onTokenToParent(value){
-          this.$emit("tokenToParent", value);
+      onTokenToParent(value) {
+        this.$emit("tokenToParent", value);
       },
       gotoFullscreen() {
         this.fullscreen = !this.fullscreen
         this.$emit('fullscreenToParent', {
           val: true,
         })
-      }
+      },
+      onAddPautaToParent(value) {
+        this.$emit("addPautaToParent", value);
+      },
+
+      
     }
   }
 </script>
@@ -186,7 +211,7 @@
 
   .home {
     position: absolute;
-    right: 10px;
+    right: 20px;
     top: 10px;
   }
 
@@ -203,7 +228,8 @@
   }
 
   .currentPosition,
-  .fullscreen, .home {
+  .fullscreen,
+  .home {
     button {
       width: 38px;
       height: 38px;

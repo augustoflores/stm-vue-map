@@ -2,7 +2,7 @@
 <div>
   <md-dialog :md-active="showDialog">
     <md-toolbar>
-      <h3 class="md-title" style="flex: 1"><md-icon class="icon">room</md-icon>{{infoDireccionComercial}}</h3>
+      <h3 class="md-title" style="flex: 1"><md-icon class="icon">dynamic_feed</md-icon>Pauta</h3>
       <md-button class="md-icon-button"  @click="closeDialog()">
         <md-icon>close</md-icon>
       </md-button>
@@ -98,64 +98,7 @@
 
     </md-dialog-actions>
   </md-dialog>
-  <vue-html2pdf
-        :show-layout="false"
-        :float-layout="true"
-        :enable-download="true"
-        :paginate-elements-by-height="1400"
-        filename="ficha"
-        :pdf-quality="2"
-        :manual-pagination="false"
-        pdf-format="letter"
-        :html-to-pdf-options={margin:20,filename:infoDireccionComercial}
-        pdf-orientation="portrait"
-        pdf-content-width="800px"
-        ref="html2Pdf"
-        v-if="authenticated"
-    >
-        <section slot="pdf-content">
-          <div class="md-layout">
-            <div  class="md-layout-item md-size-50">
-              <img src="../assets/sotmedia.png" width="200">
-            </div>
-            <div  class="md-layout-item md-size-50">
-              <vue-qrcode :value="'devel.sotmedia.com.mx/mapa/#/'+currentUbication.id" />
-            </div>
-            <div class="md-layout-item md-size-100">
-              <h3 class="md-title"><md-icon class="icon">room</md-icon>{{infoDireccionComercial}}</h3>
-            <md-divider></md-divider>
-              <md-subheader>
-                <md-icon class="icon">map</md-icon>Ubicacion 
-              </md-subheader>
-              <b>Edo.:</b> {{infoCiudad}} <br>
-              <b>Col.:</b> {{infoColonia_comercial}} <br>
-              <b>Del. o Mpo.:</b> {{infoDelegacion}}
-              <md-divider></md-divider>
-            </div>
-            <div  class="md-layout-item md-size-100">
-              <md-subheader><md-icon class="icon">assignment</md-icon>Especificaciones</md-subheader>
-              <b>Formato:</b> {{infoFormato}} <br>
-              <b>Tipo de lona:</b> {{infoTipoLona}} <br>
-              <b>Vista:</b> {{infoVista}}
-              <md-divider></md-divider>
-            </div>
-            <div class="md-layout-item md-size-100">
-              <md-subheader><md-icon class="icon">aspect_ratio</md-icon>Medidas</md-subheader>
-              <span v-if="infoAltura"><b>Altura:</b> {{infoAltura}}</span> <br>
-              <span v-if="infoBase"><b>Base:</b> {{infoBase}}</span> <br>
-              <span v-if="infoSuperficie"><b>Superficie:</b> {{infoSuperficie}}</span>
-              <md-divider></md-divider>
-            </div>
-            <div  class="md-layout-item md-size-40">
-            </div>
-            <div  class="md-layout-item md-size-60">
-              <a :href="'devel.sotmedia.com.mx/mapa/#/ubicacion/'+currentUbication.id">
-                devel.sotmedia.com.mx/mapa/#/{{currentUbication.id}} 
-              </a>
-            </div>
-          </div>    
-        </section>
-    </vue-html2pdf>
+
 </div>
 </template>
 <script>
@@ -163,22 +106,18 @@
 import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-import VueHtml2pdf from 'vue-html2pdf'
-import VueQrcode from 'vue-qrcode'
 import { validationMixin } from 'vuelidate'
 import {
     required,
     email,
 } from 'vuelidate/lib/validators'
 
-Vue.use(VueAxios, axios, VueHtml2pdf, VueQrcode)
+Vue.use(VueAxios, axios)
 
 export default {
-  name: 'VueDialog',
+  name: 'VuePauta',
   mixins: [validationMixin],
   components: {
-      VueHtml2pdf,
-      VueQrcode
   },
   props: {
     zoom: Number,
