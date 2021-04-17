@@ -20,6 +20,8 @@
         v-on:filterTipoToParent="onFilterTipoEvent" v-on:filterFormatoToParent="onFilterFormatoEvent"
         v-on:listadoToParent="onListadoEvent"
         v-on:pautaToParent="onPautaEvent"
+        v-on:removePautaToParent="onRemovePauta"
+        v-on:zoomToParent="onZoomEvent"
 
         :isList="isList"
         :markersPauta="markersPauta"
@@ -51,7 +53,7 @@
         isLoaded: false,
         menuVisible: true,
         markers: [],
-        markersPauta: [1111,1112],
+        markersPauta: [1110, 1111, 1076],
         filteredMarkersPauta: [],
         infoDireccionComercial: "String",
         infoFormato: "String",
@@ -70,6 +72,8 @@
     },
     mounted(){
       var now= new Date()
+      this.markersPauta = this.$route.params.markers.split(",")
+
       console.log("json",Vue.localStorage.get('authenticated',null))
       var auth=JSON.parse(Vue.localStorage.get('authenticated',null))
       if(auth!=null){
@@ -138,6 +142,12 @@
         }
         this.filterPautaMarkers()
       },
+      onRemovePauta(value){
+        if(this.markersPauta.indexOf(value.id)!=-1){
+          this.markersPauta.splice(this.markersPauta.indexOf(value.id),1);
+          this.filterPautaMarkers()
+        }
+      },
       onPautaEvent(value){     
         if(value.isPauta){
           this.filterPautaMarkers()
@@ -152,8 +162,12 @@
               return false
             }
           })
-      }
-      ,
+      },
+      arrayRemove(arr, value) {
+        return arr.filter(function(ele){ 
+            return ele != value; 
+        });
+      },
       filterMarkers() {
         var filtrosTipo = this.filtrosTipo;
         var filtrosFormato = this.filtrosFormato;
@@ -205,7 +219,8 @@
     left: 0px;
     bottom: 0px;
     width: 100vw;
-    height: 40vh;
+    //height: 40vh;
+    //*FILTRO
   }
 
   .logo {
@@ -223,15 +238,16 @@
       position: fixed;
       left: 50px;
       bottom: 50px;
-      width: 40vw;
-      height: 30vh;
+      width: 60vw;
+      //height: 30vh;
+      //*FILTRO
     } 
 
   }
 
   @media only screen and (min-width: 960px) {
     .filter {
-      width: 30vw;
+      width: 40vw;
     }
   }
 </style>

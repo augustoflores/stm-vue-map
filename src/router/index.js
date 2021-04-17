@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import UbicationsComponent from '@/views/UbicationsComponent'
 import VueDialog from '@/components/VueDialog'
-import VuePauta from '@/components/VuePauta'
+//import VuePauta from '@/components/VuePauta'
 
 //import listComponent from '@/views/ListComponent'
 //import VueTemplate from '@/components/VueTemplate'
@@ -26,7 +26,6 @@ const routes = [
       {
         path: '/pauta/:markers',
         name: 'Pauta',
-        components: {ficha:VuePauta},
         props: {
           default: true,
         },
