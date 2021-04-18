@@ -6,20 +6,20 @@
           <div class="md-layout-item col md-xsmall-size-50 md-small-size-50 md-medium-size-50 md-large-size-50">
             <span v-if="markersPauta.length" class="botonpautad">
               <span class="switchlabel">Buscar </span>
-              <md-icon class="switchicon md-xsmall-hide">travel_explore</md-icon>
+              <md-icon class="switchicon md-xsmall-hide md-small-hide">travel_explore</md-icon>
               <md-switch v-model="isPauta" @change="setPauta" class="md-primary switch">
               </md-switch>
               <md-badge :md-content="markersPauta.length" md-position="bottom" md-dense>
-                <md-icon class="switchicon md-xsmall-hide">dynamic_feed</md-icon><span class="switchlabel">Pauta</span>
+                <md-icon class="switchicon md-xsmall-hide md-small-hide">dynamic_feed</md-icon><span class="switchlabel">Pauta</span>
               </md-badge>
             </span>
           </div>
           <div class="md-layout-item col md-xsmall-size-50 md-small-size-50 md-medium-size-50 md-large-size-50">
             <span class="switchlabel">Mapa </span>
-            <md-icon class="switchicon md-xsmall-hide">map</md-icon>
+            <md-icon class="switchicon md-xsmall-hide md-small-hide">map</md-icon>
             <md-switch v-model="isListado" @change="setListado" class="md-primary switch">
             </md-switch>
-            <md-icon class="switchicon md-xsmall-hide">view_list</md-icon><span class="switchlabel">Lista</span>
+            <md-icon class="switchicon md-xsmall-hide md-small-hide">view_list</md-icon><span class="switchlabel">Lista</span>
           </div>
           <div class="md-layout-item col md-medium-size-100 md-large-size-100 autocompletefield" v-if="!isPauta">
             <gmap-autocomplete class="autocomplete" @place_changed="setPlace" :value="search" :options="{
@@ -66,35 +66,37 @@
                   &#10006;
                   <md-tooltip md-direction="right">Borrar</md-tooltip>
                 </div>
-
               </li>
             </ul>
-            <!--div>
-              <md-chips class="md-primary" >
-                <label>La Liga Clubs</label>
-                <div class="md-helper-text">Three uppercase letters</div>
-              </md-chips>
-            </div-->
-
-
           </div>
           <div class="md-size-100 md-layout-item"  v-if="markersPauta.length">
             <div class="alignright">
-              <span>
+              <div class="url">
                 http://devel.sotmedia.com.mx/mapa/#/pauta/{{this.markersPauta.join(',')}}
-              </span>
+              </div>
               <div class="copy" 
               v-clipboard:copy="path.concat('', markersPauta.join(','))" 
               v-clipboard:success="onCopy" 
-              v-clipboard:error="onError">
-                Copiar <md-icon class="copyicon">content_copy</md-icon>
+              v-clipboard:error="onError"
+              v-if="!isShareable">
+                Copiar
+                <md-icon class="copyicon">content_copy</md-icon>
               </div>
+              <navigator-share
+                v-bind:on-error="onError"
+                v-bind:on-success="onSuccess"
+                :url="path.concat('', markersPauta.join(','))"
+                v-if="isShareable"
+                title="Pauta"
+                text="Pauta">
+              </navigator-share>   
             </div>
+
           </div>
         </div>
 
       </md-card-content>
-    </md-card>        <md-snackbar md-position="center" md-duration="3000"
+    </md-card>        <md-snackbar md-position="center" :md-duration=3000
          :md-active.sync="showSnackbar" md-persistent>
           Pauta copiada
         </md-snackbar>
@@ -103,9 +105,16 @@
 <script>
   import Vue from 'vue'
   import VueClipboard from 'vue-clipboard2'
-  Vue.use(VueClipboard)
+  import NavigatorShare from 'vue-navigator-share'
+  Vue.use(
+    VueClipboard,
+    NavigatorShare,
+  )
   export default {
     name: 'VueFilter',
+    components: {
+      NavigatorShare
+    },
     props: {
       msg: String,
       infoDireccionComercial: String,
@@ -124,6 +133,7 @@
     data: () => ({
       isListado: false,
       isPauta: false,
+      isShareable: false,
       tipo_lona: String,
       formato: String,
       place: null,
@@ -140,6 +150,8 @@
       this.selectedFormato = this.arr_formato
       this.setTipoSelected(this.arr_tipo_lona)
       this.setFormatoSelected(this.arr_formato)
+      this.isShareable==navigator.share
+      console.log(this.isShareable);
     },
     methods: {
       ubicationClick: function (info) {
@@ -179,8 +191,11 @@
       onCopy: function () {
         this.showSnackbar=true
       },
-      onError: function () {
-        console.warn('Failed to copy texts')
+      onSuccess: function () {
+        console.log("Shared");
+      },
+      onError: function (e) {
+        console.error('Failed:',e)
       },
       removePautaClick: function (m) {
         console.log(this.markersPauta.length);
@@ -332,14 +347,24 @@
   }
 
   .alignright {
-    font-size: 10px;
+    font-size: 8px;
     text-align: center;
     display: inline-block;
     transition-duration: 500ms;
     border-radius: 20px;
     padding-left: 15px;
     margin-top: 10px;
-    background: #e8eaeb;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 9px;
+    div{
+      flex-grow: 1;
+    }
+    .url{
+        word-break: break-all;
+    }
   }
 
   .copy {
@@ -351,6 +376,10 @@
     transition-duration: 500ms;
     margin-left: 10px;
     cursor: pointer;
+    min-width: 80px;
+    //position: absolute;
+    //top: 0;
+    //right: 0;
 
     &:hover {
       background: #919394;
@@ -362,9 +391,7 @@
   .copyicon {
     color: white;
   }
-  .snack{
-    text-align: center;
-  }
+
 
   @media only screen and (min-width: 600px) {
     .filtro {
@@ -372,5 +399,15 @@
       //height: auto;
       //*FILTRO
     }
+    .alignright {
+    font-size: 8px;
+    text-align: center;
+    display: flex;
+    transition-duration: 500ms;
+    border-radius: 20px;
+    padding-left: 15px;
+    margin-top: 10px;
+    background: #e8eaeb;
+  }
   }
 </style>

@@ -238,7 +238,7 @@
       position: fixed;
       left: 50px;
       bottom: 50px;
-      width: 60vw;
+      width: 43vw;
       //height: 30vh;
       //*FILTRO
     } 
@@ -247,7 +247,7 @@
 
   @media only screen and (min-width: 960px) {
     .filter {
-      width: 40vw;
+      width: 35vw;
     }
   }
 </style>
