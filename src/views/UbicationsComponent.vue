@@ -22,7 +22,6 @@
         v-on:pautaToParent="onPautaEvent"
         v-on:removePautaToParent="onRemovePauta"
         v-on:zoomToParent="onZoomEvent"
-
         :isList="isList"
         :markersPauta="markersPauta"
         :filteredMarkersPauta="filteredMarkersPauta"
@@ -38,7 +37,6 @@
   import Vue from 'vue'
   import VueMap from '@/components/VueMap.vue'
   import VueFilter from '@/components/VueFilter.vue'
-
   export default {
     name: 'UbicationsComponent',
     components: {
@@ -53,7 +51,7 @@
         isLoaded: false,
         menuVisible: true,
         markers: [],
-        markersPauta: [1110, 1111, 1076],
+        markersPauta: [],
         filteredMarkersPauta: [],
         infoDireccionComercial: "String",
         infoFormato: "String",
@@ -72,8 +70,11 @@
     },
     mounted(){
       var now= new Date()
-      this.markersPauta = this.$route.params.markers.split(",")
-
+      this.markersPauta =  this.$route.params.markers.split(",").map( Number )
+      //.map(this.$route.params.markers.split(','), function(value){
+      //return parseInt(value, 10);
+      //});
+      this.filterPautaMarkers()
       console.log("json",Vue.localStorage.get('authenticated',null))
       var auth=JSON.parse(Vue.localStorage.get('authenticated',null))
       if(auth!=null){
@@ -162,6 +163,9 @@
               return false
             }
           })
+          console.log("array: ",markersPauta);
+          console.log("filtered array: ",this.filteredMarkersPauta);
+
       },
       arrayRemove(arr, value) {
         return arr.filter(function(ele){ 

@@ -151,7 +151,6 @@
       this.setTipoSelected(this.arr_tipo_lona)
       this.setFormatoSelected(this.arr_formato)
       this.isShareable==navigator.share
-      console.log(this.isShareable);
     },
     methods: {
       ubicationClick: function (info) {
