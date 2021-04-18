@@ -217,13 +217,13 @@
 
   .currentPosition {
     position: absolute;
-    right: 55px;
+    right: 15px;
     top: 10px;
   }
 
   .fullscreen {
     position: absolute;
-    right: 100px;
+    right: 70px;
     top: 10px;
   }
 
