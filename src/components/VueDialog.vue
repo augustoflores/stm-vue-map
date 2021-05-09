@@ -1,16 +1,16 @@
 <template>
 <div>
   <md-dialog :md-active="showDialog">
-    <md-toolbar>
+    <md-toolbar class="fondo0">
       <h3 class="md-title" style="flex: 1"><md-icon class="icon">room</md-icon>{{infoDireccionComercial}}</h3>
       <md-button class="md-icon-button"  @click="closeDialog()">
         <md-icon>close</md-icon>
       </md-button>
     </md-toolbar>
-    <md-tabs md-dynamic-height>
-      <md-tab md-label="Información" class="contentScroll" md-icon="description">
-        <div class="md-layout">
-            <div class="md-layout-item md-size-100">
+    <md-tabs md-dynamic-height  class="md-primary">
+      <md-tab md-label="Información" class="contentScroll fondo1" md-icon="description" >
+        <div class="md-layout ">
+            <div class="md-layout-item md-size-100 ">
               <md-subheader>
                 <md-icon class="icon">map</md-icon>Ubicacion 
                 <md-chip class="md-primary chip"  @click="zoomClick()">
@@ -76,7 +76,7 @@
         </div>
         
       </md-tab>
-      <md-tab md-label="Vista de calle" class="contentScroll" md-icon="streetview">
+      <md-tab md-label="Vista de calle" class="contentScroll fondo1b" md-icon="streetview">
         <gmap-street-view-panorama class="pano"
         :pov="{heading: 0, pitch: 0}"
         :position="{lat: Number(this.lat),lng: Number(this.lng)}"
@@ -84,7 +84,7 @@
         </gmap-street-view-panorama>
       </md-tab>
     </md-tabs>
-    <md-dialog-actions>
+    <md-dialog-actions class="fondo2">
       <a href="/ingresar/olvide-contrasena/"  class="link"  v-if="!authenticated">
         Olvide Contraseña <md-icon class="icon">person_search</md-icon>
       </a> 
@@ -365,6 +365,41 @@ a {
 .link:hover{
   text-decoration: none;
 }
+.md-theme-default {
+  //background-color: unset!important;;
+}
+.md-tabs-navigation {
+      background-color: #ff44f6!important;
+}
+.fondo0{
+  background: #1FAAD1;
+  h3, i{
+    color: white!important;
+  }
+}
+.fondo1{
+background: #1faad1;
+background: -moz-linear-gradient(358deg, rgba(54,94,104,1) 10%, rgba(255,255,255,0) 10%),-moz-linear-gradient(317deg, rgba(31,170,209,1) 25%, rgba(255,255,255,0) 25%),-moz-linear-gradient(65deg, rgba(247,93,41,1) 29%, rgba(255,255,255,0) 29%);
+background: -webkit-linear-gradient(358deg, rgba(54,94,104,1) 10%, rgba(255,255,255,0) 10%), -webkit-linear-gradient(317deg, rgba(31,170,209,1) 25%, rgba(255,255,255,0) 25%),-webkit-linear-gradient(65deg, rgba(247,93,41,1) 29%, rgba(255,255,255,0) 29%);
+background: linear-gradient(358deg, rgba(54,94,104,1) 10%, rgba(255,255,255,0) 10%),linear-gradient(317deg, rgba(31,170,209,1) 25%, rgba(255,255,255,0) 25%),linear-gradient(65deg, rgba(247,93,41,1) 29%, rgba(255,255,255,0) 29%);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#365e68",endColorstr="#ffffff",GradientType=1), progid:DXImageTransform.Microsoft.gradient(startColorstr="#1faad1",endColorstr="#ffffff",GradientType=1),progid:DXImageTransform.Microsoft.gradient(startColorstr="#f75d29",endColorstr="#ffffff",GradientType=1);
+}
+.fondo1b{
+background: #1faad1;
+background: -moz-linear-gradient(2deg, rgba(54,94,104,1) 10%, rgba(255,255,255,0) 10%), -moz-linear-gradient(110deg, rgba(31,170,209,1) 29%, rgba(255,255,255,0) 29%),-moz-linear-gradient(321deg, rgba(247,93,41,1) 29%, rgba(255,255,255,0) 29%);
+background: -webkit-linear-gradient(2deg, rgba(54,94,104,1) 10%, rgba(255,255,255,0) 10%),-webkit-linear-gradient(110deg, rgba(31,170,209,1) 29%, rgba(255,255,255,0) 29%),-webkit-linear-gradient(321deg, rgba(247,93,41,1) 29%, rgba(255,255,255,0) 29%);
+background: linear-gradient(2deg, rgba(54,94,104,1) 10%, rgba(255,255,255,0) 10%),linear-gradient(110deg, rgba(31,170,209,1) 29%, rgba(255,255,255,0) 29%),linear-gradient(321deg, rgba(247,93,41,1) 29%, rgba(255,255,255,0) 29%);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#365e68",endColorstr="#ffffff",GradientType=1),progid:DXImageTransform.Microsoft.gradient(startColorstr="#1faad1",endColorstr="#ffffff",GradientType=1), progid:DXImageTransform.Microsoft.gradient(startColorstr="#f75d29",endColorstr="#ffffff",GradientType=1) ;
+}
+.fondo2{
+  background: #365E68;
+  a,i{
+      color: white!important;
+  }
+
+  //background: #F75D29;
+}
+
 @media only screen and (min-width: 600px) {
   .pano {
     height: 40vh;
