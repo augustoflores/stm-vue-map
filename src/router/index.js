@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import UbicationsComponent from '@/views/UbicationsComponent'
+//import LoginComponent from '@/views/LoginComponent'
 import VueDialog from '@/components/VueDialog'
+import VueLogin from '@/components/VueLogin'
+
 //import VuePauta from '@/components/VuePauta'
 
 //import listComponent from '@/views/ListComponent'
@@ -39,9 +42,25 @@ const routes = [
           ficha:true
         },
       },
+      {
+        path: '/acceso',
+        name: 'Ubicacion',
+        components: {ficha:VueLogin},
+        props: {
+          default: true,
+          ficha:true
+        },
+      },
     ]
   },
   /*{
+    path: '/acceso',
+    name: 'Acceso',
+    component: LoginComponent,
+    props: {
+    }
+  },
+  {
     path: '/listado',
     name: 'Listado',
     component: UbicationsComponent,

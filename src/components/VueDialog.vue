@@ -91,8 +91,7 @@
       <a href="/registrate" class="link" v-if="!authenticated">
         Registrate <md-icon class="icon">person_add</md-icon>
       </a>
-      
-      <md-button @click="addPauta()" v-if="authenticated" class="md-raised  md-primary">Agregar a pauta<md-icon class="icon">add_location_alt</md-icon></md-button>
+      <md-button @click="addPauta()" v-if="isAdmin" class="md-raised  md-primary">Agregar a pauta<md-icon class="icon">add_location_alt</md-icon></md-button>
 
       <md-button @click="downloadPDF()" v-if="authenticated" class="md-raised  md-accent">Descarga Ficha<md-icon class="icon">picture_as_pdf</md-icon></md-button>
 
@@ -184,7 +183,8 @@ export default {
     zoom: Number,
     marker: String,
     markers:Array,
-    authenticated: Object
+    authenticated: Object,
+    isAdmin: Boolean,
   },
   data:() => ({
     showDialog: true,

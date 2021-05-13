@@ -8,24 +8,16 @@
         :infoFormato="infoFormato" :infoTipoLona="infoTipoLona" :centerLat="centerLat" :centerLng="centerLng"
         :zoom="zoom" :showDialog="showDialog" v-on:childToParent="onChildEvent" v-on:zoomToParent="onZoomEvent"
         v-on:zoomChangedToParent="onZoomChangedEvent" v-on:showDialogToParent="showDialogEvent"
-        v-on:addPautaToParent="onAddPauta"
-        v-on:tokenToParent="onTokenToParent" v-on:fullscreenToParent="toggle" :authenticated="authenticated"
-        :isList="isList"
-        :markersPauta="markersPauta"
-        />
+        v-on:addPautaToParent="onAddPauta" v-on:tokenToParent="onTokenToParent" v-on:fullscreenToParent="toggle"
+        :authenticated="authenticated" :isAdmin="isAdmin" :isList="isList" :markersPauta="markersPauta" />
     </div>
-    <div class="filter">
+    <div class="filter" v-if="authenticated">
       <VueFilter :infoDireccionComercial="infoDireccionComercial" :infoFormato="infoFormato"
         :infoTipoLona="infoTipoLona" :total="total" :search="search" v-on:filterPlaceToParent="onFilterPlaceEvent"
         v-on:filterTipoToParent="onFilterTipoEvent" v-on:filterFormatoToParent="onFilterFormatoEvent"
-        v-on:listadoToParent="onListadoEvent"
-        v-on:pautaToParent="onPautaEvent"
-        v-on:removePautaToParent="onRemovePauta"
-        v-on:zoomToParent="onZoomEvent"
-        :isList="isList"
-        :markersPauta="markersPauta"
-        :filteredMarkersPauta="filteredMarkersPauta"
-         />
+        v-on:listadoToParent="onListadoEvent" v-on:pautaToParent="onPautaEvent" v-on:removePautaToParent="onRemovePauta"
+        v-on:zoomToParent="onZoomEvent" :isList="isList" :markersPauta="markersPauta"
+        :filteredMarkersPauta="filteredMarkersPauta" />
     </div>
     <md-snackbar :md-duration="Infinity" :md-active.sync="showSnackbar">
       {{infoDireccionComercial}}, {{infoFormato}}, {{infoTipoLona}}
@@ -43,11 +35,10 @@
       VueMap,
       VueFilter,
     },
-    props:{
-      },
+    props: {},
     data: function () {
       return {
-        isList:false,
+        isList: false,
         isLoaded: false,
         menuVisible: true,
         markers: [],
@@ -66,28 +57,48 @@
         search: "",
         showDialog: false,
         authenticated: null,
+        userName: "",
+        isAdmin: "",
       }
     },
-    mounted(){
-      var now= new Date()
-      this.markersPauta =  this.$route.params.markers.split(",").map( Number )
+    beforeRouteEnter(to, from, next) {
+      if (to.query.redirectFrom) {
+        next()
+      } else {
+        next()
+      }
+    },
+    mounted() {
+      var now = new Date()
+      try {
+        this.markersPauta = this.$route.params.markers.split(",").map(Number)
+      } catch (error) {
+        console.log("Not pauta");
+      }
       //.map(this.$route.params.markers.split(','), function(value){
       //return parseInt(value, 10);
       //});
       this.filterPautaMarkers()
-      console.log("json",Vue.localStorage.get('authenticated',null))
-      var auth=JSON.parse(Vue.localStorage.get('authenticated',null))
-      if(auth!=null){
-        if(now>auth.expiration){
-          auth=null
-          Vue.localStorage.set('authenticated','')
+      console.log("json", Vue.localStorage.get('authenticated', null))
+      var auth = JSON.parse(Vue.localStorage.get('authenticated', null))
+      if (auth != null) {
+        if (now > auth.expiration) {
+          auth = null
+          Vue.localStorage.set('authenticated', '')
         }
       }
-      this.authenticated=auth
-      if(this.hasClass(document.body,"logged-in") && Vue.localStorage.get('authenticated')==null){
-          var expDate =new Date(now.setHours(now.getHours() + 1 ))
-          this.authenticated = {token:'wordpress-logged', expiration:expDate}
-          //Vue.localStorage.set('authenticated',JSON.stringify(this.authenticated))
+      this.authenticated = auth
+      if (this.hasClass(document.body, "logged-in") && Vue.localStorage.get('authenticated') == null) {
+        var expDate = new Date(now.setHours(now.getHours() + 1))
+        this.authenticated = {
+          token: 'wordpress-logged',
+          expiration: expDate
+        }
+        //Vue.localStorage.set('authenticated',JSON.stringify(this.authenticated))
+      }
+      console.log("auth: ", this.authenticated);
+      if (!this.authenticated) {
+        this.$router.push("/acceso")
       }
     },
     beforeMount() {
@@ -105,7 +116,7 @@
         this.centerLat = Number(value.centerLat);
         this.centerLng = Number(value.centerLng);
         this.showDialog = value.dialogvisible;
-        this.isList=false 
+        this.isList = false
       },
       onZoomChangedEvent(value) {
         this.zoom = value.zoom;
@@ -128,51 +139,57 @@
       onFilterTipoEvent(value) {
         this.filtrosTipo = value.tipo;
       },
-      onTokenToParent(value){
-          var now = new Date()
-          var expDate =new Date(now.setHours(now.getHours() + 1 ))
-          this.authenticated = {token:value, expiration:expDate}
-          Vue.localStorage.set('authenticated',JSON.stringify(this.authenticated))
+      onTokenToParent(value) {
+        var now = new Date()
+        var expDate = new Date(now.setHours(now.getHours() + 1))
+        this.authenticated = {
+          token: value.token,
+          expiration: expDate
+        }
+        this.isAdmin = value.user_roles.includes('administrator')
+        console.log("isAdmin: ", this.isAdmin)
+        Vue.localStorage.set('authenticated', JSON.stringify(this.authenticated))
       },
-      onListadoEvent(value){
-        this.isList=value.isList        
+      onListadoEvent(value) {
+        this.isList = value.isList
       },
-      onAddPauta(value){        
+      onAddPauta(value) {
         if (this.markersPauta.indexOf(value.id) === -1) {
           this.markersPauta.push(value.id)
         }
         this.filterPautaMarkers()
       },
-      onRemovePauta(value){
-        if(this.markersPauta.indexOf(value.id)!=-1){
-          this.markersPauta.splice(this.markersPauta.indexOf(value.id),1);
+      onRemovePauta(value) {
+        if (this.markersPauta.indexOf(value.id) != -1) {
+          this.markersPauta.splice(this.markersPauta.indexOf(value.id), 1);
           this.filterPautaMarkers()
         }
       },
-      onPautaEvent(value){     
-        if(value.isPauta){
+      onPautaEvent(value) {
+        if (value.isPauta) {
           this.filterPautaMarkers()
         }
       },
-      filterPautaMarkers() {
-        var markersPauta=this.markersPauta;
-        this.filteredMarkersPauta=this.markers.filter(function (elem) {
-            if(markersPauta.includes(elem.id)){
-              return true
-            }else{
-              return false
-            }
-          })
-          console.log("array: ",markersPauta);
-          console.log("filtered array: ",this.filteredMarkersPauta);
 
-      },
       arrayRemove(arr, value) {
-        return arr.filter(function(ele){ 
-            return ele != value; 
+        return arr.filter(function (ele) {
+          return ele != value;
         });
       },
-      filterMarkers() {
+      filterPautaMarkers() {
+        var markersPauta = this.markersPauta;
+        this.filteredMarkersPauta = this.markers.filter(function (elem) {
+          if (markersPauta.includes(elem.id)) {
+            return true
+          } else {
+            return false
+          }
+        })
+        console.log("array: ", markersPauta);
+        console.log("filtered array: ", this.filteredMarkersPauta);
+
+      },
+      filterAllMarkers() {
         var filtrosTipo = this.filtrosTipo;
         var filtrosFormato = this.filtrosFormato;
         var newMarkers = this.markers.filter(
@@ -188,14 +205,54 @@
         this.total = newMarkers.length
         return newMarkers
       },
+      filterMapPautaMarkers() {
+        var markersPauta = this.markersPauta;
+
+        var filtrosTipo = this.filtrosTipo;
+        var filtrosFormato = this.filtrosFormato;
+        var newMarkers = this.markers.filter(
+          function (elem) {
+            if (filtrosFormato.includes(elem.formato)) {
+              return true
+            }
+            if (filtrosTipo.includes(elem.tipo_lona)) {
+              return true
+            }
+          }
+        );
+        if (!this.isAdmin) {
+
+          var newMarkersPauta = newMarkers.filter(function (elem) {
+            if (markersPauta.includes(elem.id)) {
+              return true
+            } else {
+              return false
+            }
+          })
+          this.total = newMarkersPauta.length
+          return newMarkers
+        } else {
+          return newMarkers
+        }
+      },
+      filterMarkers() {
+        if (this.markersPauta.length > 0 && !this.isAdmin) {
+          return this.filterMapPautaMarkers()
+        } else {
+          console.log(false);
+          return this.filterAllMarkers()
+        }
+
+      },
+
       toggle() {
         this.$emit('fullscreenToParent', {
           val: true,
         })
       },
-      hasClass(ele,cls) {
-        var value=ele.className.indexOf(cls)
-        if(value>-1){
+      hasClass(ele, cls) {
+        var value = ele.className.indexOf(cls)
+        if (value > -1) {
           return true
         }
         return false
@@ -209,9 +266,10 @@
     border: 1px solid rgba(#000, .12);
   }
 
-  .map{
+  .map {
     z-index: 0;
   }
+
   // Demo purposes only
   .md-drawer {
     width: 230px;
@@ -245,7 +303,7 @@
       width: 43vw;
       //height: 30vh;
       //*FILTRO
-    } 
+    }
 
   }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="map">
-    <router-view name="ficha" :authenticated="authenticated" :markers="markers" :marker="marker"
+    <router-view name="ficha" :authenticated="authenticated" :isAdmin="isAdmin" :markers="markers" :marker="marker"
       v-on:zoomToParent="onZoomEvent" v-on:tokenToParent="onTokenToParent"
        v-on:addPautaToParent="onAddPautaToParent" />
     <GmapMap style="width: 100%; height: 100%;" :options="{
@@ -74,7 +74,8 @@
       showSnackbar: Boolean,
       showDialog: Boolean,
       authenticated: Object,
-      isList: Boolean
+      isList: Boolean,
+      isAdmin:Boolean
     },
     data: () => ({
       fullscreen: false,
