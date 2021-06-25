@@ -29,6 +29,10 @@
   }
 </script>
 <style lang="scss">
+*{
+  font-size: 14px!important;
+  line-height: 1.3!important;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -45,5 +49,8 @@
       color: #42b983;
     }
   }
+}
+.md-overlay {
+    z-index: 10!important;
 }
 </style>

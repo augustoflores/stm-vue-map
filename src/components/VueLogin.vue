@@ -29,7 +29,7 @@
           </md-field>
         </div>
       </div>
-             <div v-if="!authenticated" class="md-layout">
+             <div  class="md-layout">
             <div class="md-layout-item md-size-100 aligncenter">
               <md-button :disabled="loginwait" class="md-raised md-primary" @click="validateUser()">Ingresar
                 <md-icon class="icon" v-if="!loginwait">login</md-icon>
@@ -121,13 +121,17 @@
         this.showDialog = false
       },
       closeDialog: function () {
-        this.$router.push("/")
+        if(Vue.localStorage.get('originUrl')){
+            this.$router.push(Vue.localStorage.get('originUrl'))
+        }else{
+          this.$router.push("/")
+        }
       },
 
       doLogin() {
         this.loginerror = false
         this.loginwait = true
-        axios.post('https://devel.sotmedia.com.mx/wp-json/jwt-auth/v1/token', {
+        axios.post('https://sotmedia.com.mx/wp-json/jwt-auth/v1/token', {
           username: this.form.username,
           password: this.form.password
         }).then(response => {
@@ -252,7 +256,7 @@
   }
 
   .md-theme-default {
-    //background-color: unset!important;;
+    //background-color: unset!important;
   }
 
   .md-tabs-navigation {
@@ -260,7 +264,8 @@
   }
 
   .fondo0 {
-    background: #1FAAD1;
+    background: #1FAAD1!important;
+    background-color: #1FAAD1!important;
 
     h3,
     i {
@@ -270,18 +275,20 @@
 
   .fondo1 {
     background: #1faad1;
-    background: -moz-linear-gradient(358deg, rgba(54, 94, 104, 1) 10%, rgba(255, 255, 255, 0) 10%), -moz-linear-gradient(317deg, rgba(31, 170, 209, 1) 25%, rgba(255, 255, 255, 0) 25%), -moz-linear-gradient(65deg, rgba(247, 93, 41, 1) 29%, rgba(255, 255, 255, 0) 29%);
+   /* background: -moz-linear-gradient(358deg, rgba(54, 94, 104, 1) 10%, rgba(255, 255, 255, 0) 10%), -moz-linear-gradient(317deg, rgba(31, 170, 209, 1) 25%, rgba(255, 255, 255, 0) 25%), -moz-linear-gradient(65deg, rgba(247, 93, 41, 1) 29%, rgba(255, 255, 255, 0) 29%);
     background: -webkit-linear-gradient(358deg, rgba(54, 94, 104, 1) 10%, rgba(255, 255, 255, 0) 10%), -webkit-linear-gradient(317deg, rgba(31, 170, 209, 1) 25%, rgba(255, 255, 255, 0) 25%), -webkit-linear-gradient(65deg, rgba(247, 93, 41, 1) 29%, rgba(255, 255, 255, 0) 29%);
     background: linear-gradient(358deg, rgba(54, 94, 104, 1) 10%, rgba(255, 255, 255, 0) 10%), linear-gradient(317deg, rgba(31, 170, 209, 1) 25%, rgba(255, 255, 255, 0) 25%), linear-gradient(65deg, rgba(247, 93, 41, 1) 29%, rgba(255, 255, 255, 0) 29%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#365e68", endColorstr="#ffffff", GradientType=1), progid:DXImageTransform.Microsoft.gradient(startColorstr="#1faad1", endColorstr="#ffffff", GradientType=1), progid:DXImageTransform.Microsoft.gradient(startColorstr="#f75d29", endColorstr="#ffffff", GradientType=1);
+  */
   }
 
   .fondo1b {
     background: #1faad1;
-    background: -moz-linear-gradient(2deg, rgba(54, 94, 104, 1) 10%, rgba(255, 255, 255, 0) 10%), -moz-linear-gradient(110deg, rgba(31, 170, 209, 1) 29%, rgba(255, 255, 255, 0) 29%), -moz-linear-gradient(321deg, rgba(247, 93, 41, 1) 29%, rgba(255, 255, 255, 0) 29%);
+    /*background: -moz-linear-gradient(2deg, rgba(54, 94, 104, 1) 10%, rgba(255, 255, 255, 0) 10%), -moz-linear-gradient(110deg, rgba(31, 170, 209, 1) 29%, rgba(255, 255, 255, 0) 29%), -moz-linear-gradient(321deg, rgba(247, 93, 41, 1) 29%, rgba(255, 255, 255, 0) 29%);
     background: -webkit-linear-gradient(2deg, rgba(54, 94, 104, 1) 10%, rgba(255, 255, 255, 0) 10%), -webkit-linear-gradient(110deg, rgba(31, 170, 209, 1) 29%, rgba(255, 255, 255, 0) 29%), -webkit-linear-gradient(321deg, rgba(247, 93, 41, 1) 29%, rgba(255, 255, 255, 0) 29%);
     background: linear-gradient(2deg, rgba(54, 94, 104, 1) 10%, rgba(255, 255, 255, 0) 10%), linear-gradient(110deg, rgba(31, 170, 209, 1) 29%, rgba(255, 255, 255, 0) 29%), linear-gradient(321deg, rgba(247, 93, 41, 1) 29%, rgba(255, 255, 255, 0) 29%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#365e68", endColorstr="#ffffff", GradientType=1), progid:DXImageTransform.Microsoft.gradient(startColorstr="#1faad1", endColorstr="#ffffff", GradientType=1), progid:DXImageTransform.Microsoft.gradient(startColorstr="#f75d29", endColorstr="#ffffff", GradientType=1);
+    */
   }
 
   .fondo2 {
@@ -311,7 +318,7 @@
     }
 
     .dialogTitle {
-      font-size: 14px;
+      font-size: 14px!important;
     }
 
   }

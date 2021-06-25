@@ -16,7 +16,7 @@
         :infoTipoLona="infoTipoLona" :total="total" :search="search" v-on:filterPlaceToParent="onFilterPlaceEvent"
         v-on:filterTipoToParent="onFilterTipoEvent" v-on:filterFormatoToParent="onFilterFormatoEvent"
         v-on:listadoToParent="onListadoEvent" v-on:pautaToParent="onPautaEvent" v-on:removePautaToParent="onRemovePauta"
-        v-on:zoomToParent="onZoomEvent" :isList="isList" :markersPauta="markersPauta"
+        v-on:zoomToParent="onZoomEvent" :isList="isList" :isAdmin="isAdmin" :markersPauta="markersPauta"
         :filteredMarkersPauta="filteredMarkersPauta" />
     </div>
     <md-snackbar :md-duration="Infinity" :md-active.sync="showSnackbar">
@@ -29,6 +29,9 @@
   import Vue from 'vue'
   import VueMap from '@/components/VueMap.vue'
   import VueFilter from '@/components/VueFilter.vue'
+  import underscore from 'vue-underscore';
+  Vue.use(underscore);
+
   export default {
     name: 'UbicationsComponent',
     components: {
@@ -38,7 +41,7 @@
     props: {},
     data: function () {
       return {
-        isList: false,
+        isList: true,
         isLoaded: false,
         menuVisible: true,
         markers: [],
@@ -58,7 +61,7 @@
         showDialog: false,
         authenticated: null,
         userName: "",
-        isAdmin: "",
+        isAdmin: false,
       }
     },
     beforeRouteEnter(to, from, next) {
@@ -73,38 +76,48 @@
       try {
         this.markersPauta = this.$route.params.markers.split(",").map(Number)
       } catch (error) {
-        console.log("Not pauta");
+        //console.log("Not pauta");
       }
-      //.map(this.$route.params.markers.split(','), function(value){
-      //return parseInt(value, 10);
-      //});
       this.filterPautaMarkers()
       console.log("json", Vue.localStorage.get('authenticated', null))
       var auth = JSON.parse(Vue.localStorage.get('authenticated', null))
+      var admin = Vue.localStorage.get('isAdmin', null)
+
       if (auth != null) {
-        if (now > auth.expiration) {
+        console.log("now:",now);
+        console.log("exp;",new Date(auth.expiration));
+        console.log("comparacion fechas:",now > new Date(auth.expiration));
+        if (now > new Date(auth.expiration)) {
           auth = null
           Vue.localStorage.set('authenticated', '')
         }
+          //Vue.localStorage.set('authenticated', '')
       }
       this.authenticated = auth
-      if (this.hasClass(document.body, "logged-in") && Vue.localStorage.get('authenticated') == null) {
+      this.isAdmin = (admin==="true")
+      /*if (this.hasClass(document.body, "logged-in") && Vue.localStorage.get('authenticated') == null) {
         var expDate = new Date(now.setHours(now.getHours() + 1))
         this.authenticated = {
           token: 'wordpress-logged',
           expiration: expDate
         }
-        //Vue.localStorage.set('authenticated',JSON.stringify(this.authenticated))
-      }
+      }*/
       console.log("auth: ", this.authenticated);
+      console.log("isAdmin: ", this.isAdmin);
+
       if (!this.authenticated) {
+        Vue.localStorage.set('originUrl', window.location.href.split("#")[1]);
+        console.log("url: ",Vue.localStorage.get('originUrl'));
         this.$router.push("/acceso")
       }
     },
     beforeMount() {
-      this.axios.get("http://devel.sotmedia.com.mx/wp-json/wp/v2/ubicacion?per_page=100").then(response => {
+      this.axios.get("https://sotmedia.com.mx/wp-json/wp/v2/ubicacion?per_page=100&_embed").then(response => {
         this.isLoaded = true;
-        this.markers = response.data
+        var notEmptyMarkers = this.$_.filter(response.data,function(m){
+          return m.lat!=0
+        })
+        this.markers = this.$_.sortBy(notEmptyMarkers, 'ciudad')
       })
     },
     methods: {
@@ -114,9 +127,9 @@
       onZoomEvent(value) {
         this.zoom = value.zoom;
         this.centerLat = Number(value.centerLat);
-        this.centerLng = Number(value.centerLng);
+        this.centerLng = Number(value.centerLng)-.00001;
         this.showDialog = value.dialogvisible;
-        this.isList = false
+        //this.isList = false
       },
       onZoomChangedEvent(value) {
         this.zoom = value.zoom;
@@ -146,9 +159,12 @@
           token: value.token,
           expiration: expDate
         }
+        
         this.isAdmin = value.user_roles.includes('administrator')
         console.log("isAdmin: ", this.isAdmin)
         Vue.localStorage.set('authenticated', JSON.stringify(this.authenticated))
+        Vue.localStorage.set('isAdmin', this.isAdmin)
+
       },
       onListadoEvent(value) {
         this.isList = value.isList
@@ -170,7 +186,6 @@
           this.filterPautaMarkers()
         }
       },
-
       arrayRemove(arr, value) {
         return arr.filter(function (ele) {
           return ele != value;
@@ -185,9 +200,8 @@
             return false
           }
         })
-        console.log("array: ", markersPauta);
-        console.log("filtered array: ", this.filteredMarkersPauta);
-
+        //console.log("array: ", markersPauta);
+        //console.log("filtered array: ", this.filteredMarkersPauta);
       },
       filterAllMarkers() {
         var filtrosTipo = this.filtrosTipo;
@@ -207,7 +221,6 @@
       },
       filterMapPautaMarkers() {
         var markersPauta = this.markersPauta;
-
         var filtrosTipo = this.filtrosTipo;
         var filtrosFormato = this.filtrosFormato;
         var newMarkers = this.markers.filter(
@@ -221,7 +234,6 @@
           }
         );
         if (!this.isAdmin) {
-
           var newMarkersPauta = newMarkers.filter(function (elem) {
             if (markersPauta.includes(elem.id)) {
               return true
@@ -230,21 +242,20 @@
             }
           })
           this.total = newMarkersPauta.length
-          return newMarkers
+          return newMarkersPauta
         } else {
           return newMarkers
         }
       },
       filterMarkers() {
+        //console.log("isAdmin: ",this.isAdmin);
         if (this.markersPauta.length > 0 && !this.isAdmin) {
           return this.filterMapPautaMarkers()
         } else {
-          console.log(false);
+          //console.log(false);
           return this.filterAllMarkers()
         }
-
       },
-
       toggle() {
         this.$emit('fullscreenToParent', {
           val: true,
@@ -265,26 +276,21 @@
     min-height: 350px;
     border: 1px solid rgba(#000, .12);
   }
-
   .map {
     z-index: 0;
   }
-
   // Demo purposes only
   .md-drawer {
     width: 230px;
     max-width: calc(100vw - 125px);
   }
-
   .filter {
     position: fixed;
-    left: 0px;
+    right: 0px;
     bottom: 0px;
     width: 100vw;
     //height: 40vh;
-    //*FILTRO
   }
-
   .logo {
     height: 60px;
     position: absolute;
@@ -294,19 +300,16 @@
     background: white;
     padding: 4px;
   }
-
   @media only screen and (min-width: 600px) {
     .filter {
       position: fixed;
-      left: 50px;
-      bottom: 50px;
+      right: 50px;
+      bottom: 100px;
       width: 43vw;
       //height: 30vh;
       //*FILTRO
     }
-
   }
-
   @media only screen and (min-width: 960px) {
     .filter {
       width: 35vw;

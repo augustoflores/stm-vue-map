@@ -26,20 +26,13 @@
         </GmapMarker>
       </gmap-cluster>
     </GmapMap>
-    <VueList v-if="isList" :markers="visibleMarkers" />
-    <!--a href="/">
-      <md-speed-dial class="home" md-direction="bottom">
-        <md-speed-dial-target class="md-accent">
-          <md-icon>close</md-icon>
-        </md-speed-dial-target>
-      </md-speed-dial>
-    </a-->
-    <md-speed-dial class="currentPosition" md-direction="bottom" v-if="!isList">
+    <VueList v-if="isList || !isAdmin " :markers="markers" v-on:zoomToParent="onZoomEvent" />
+    <md-speed-dial class="currentPosition" md-direction="bottom" >
       <md-speed-dial-target class="md-primary" v-on:click="geolocation()">
         <md-icon>my_location</md-icon>
       </md-speed-dial-target>
     </md-speed-dial>
-    <md-speed-dial class="fullscreen" md-direction="bottom" v-if="!isList">
+    <md-speed-dial class="fullscreen" md-direction="bottom" >
       <md-speed-dial-target class="md-primary" v-on:click="gotoFullscreen()">
         <md-icon v-if="!fullscreen">fullscreen</md-icon>
         <md-icon v-if="fullscreen">fullscreen_exit</md-icon>
@@ -135,12 +128,13 @@
         //try{
         if (value) {
 
-          this.visibleMarkers = this.markers.filter(function (currentValue) {
+          /*this.visibleMarkers = this.markers.filter(function (currentValue) {
             return value.contains({
               "lat": Number(currentValue.lat),
               "lng": Number(currentValue.lng)
             })
-          })
+          }) */
+          this.visibleMarkers = this.markers
         }
         //} catch(e){
         //  console.warn("Bounds changin")

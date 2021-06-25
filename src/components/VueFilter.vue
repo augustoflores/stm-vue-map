@@ -1,6 +1,6 @@
 <template>
   <div>
-    <md-card class="filtro">
+    <md-card class="filtro" v-if="isAdmin">
       <md-card-content>
         <div class="md-layout md-gutter">
           <div class="md-layout-item col md-xsmall-size-50 md-small-size-50 md-medium-size-50 md-large-size-50">
@@ -64,7 +64,7 @@
                 </span>
                 <div class="icon" @click.stop="removePautaClick(m)">
                   &#10006;
-                  <md-tooltip md-direction="right">Borrar</md-tooltip>
+                  <md-tooltip md-direction="right" v-if="isAdmin==true">Borrar</md-tooltip>
                 </div>
               </li>
             </ul>
@@ -72,7 +72,7 @@
           <div class="md-size-100 md-layout-item"  v-if="markersPauta.length">
             <div class="alignright">
               <div class="url">
-                http://devel.sotmedia.com.mx/mapa/#/pauta/{{this.markersPauta.join(',')}}
+                https://sotmedia.com.mx/mapa/#/pauta/{{this.markersPauta.join(',')}}
               </div>
               <div class="copy" 
               v-clipboard:copy="path.concat('', markersPauta.join(','))" 
@@ -129,9 +129,10 @@
       isList: Boolean,
       markersPauta: Array,
       filteredMarkersPauta: Array,
+      isAdmin:Boolean,
     },
     data: () => ({
-      isListado: false,
+      isListado: true,
       isPauta: false,
       isShareable: false,
       tipo_lona: String,
@@ -142,8 +143,8 @@
       selectedTipo: [],
       selectedFormato: [],
       showSnackbar: false,
-      path: "http://localhost:8080/#/pauta/",
-      //path: "http://devel.sotmedia.com.mx/mapa/#/pauta/",
+      path: "https://localhost:8080/#/pauta/",
+      //path: "https://sotmedia.com.mx/mapa/#/pauta/",
     }),
     mounted: function () {
       this.selectedTipo = this.arr_tipo_lona
@@ -293,7 +294,7 @@
     background-color: white;
     border: none;
     border-bottom: solid 1px grey;
-    font-size: 16px;
+    font-size: 16px!important;
     width: 100%;
     padding: 5px 0;
   }
@@ -316,7 +317,7 @@
   .switchlabel {
     transform: translateY(-5px);
     display: inline-block;
-    font-size: 9px;
+    font-size: 9px!important;
     color: gray;
   }
 
@@ -335,7 +336,7 @@
     border-radius: 45px;
     padding: 13px 16px;
     color: #777777;
-    font-size: 11px;
+    font-size: 11px!important;
     cursor: pointer;
     transition-duration: 500ms;
 
@@ -346,7 +347,7 @@
   }
 
   .alignright {
-    font-size: 8px;
+    font-size: 8px!important;
     text-align: center;
     display: inline-block;
     transition-duration: 500ms;
@@ -399,7 +400,7 @@
       //*FILTRO
     }
     .alignright {
-    font-size: 8px;
+    font-size: 8px!important;
     text-align: center;
     display: flex;
     transition-duration: 500ms;

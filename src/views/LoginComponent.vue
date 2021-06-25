@@ -125,7 +125,7 @@
       doLogin() {
         this.loginerror = false
         this.loginwait = true
-        axios.post('https://devel.sotmedia.com.mx/wp-json/jwt-auth/v1/token', {
+        axios.post('https://sotmedia.com.mx/wp-json/jwt-auth/v1/token', {
           username: this.form.username,
           password: this.form.password
         }).then(response => {
@@ -309,7 +309,7 @@
     }
 
     .dialogTitle {
-      font-size: 14px;
+      font-size: 14px!important;
     }
 
   }
