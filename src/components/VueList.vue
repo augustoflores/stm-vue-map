@@ -3,7 +3,7 @@
     <div class="md-layout md-gutter">
       <div
         class="item md-layout-item md-layout  md-gutter md-xsmall-size-100 md-small-size-100 md-medium-size-100 md-large-size-100"
-        :key="index" v-for="(m, index) in markers" :position="{lat:Number(m.lat), lng:Number(m.lng)}"
+        :key="index" v-for="(m, index) in markers" :position="{lat:Number(m.map_ubication.lat), lng:Number(m.map_ubication.lng)}"
         @click="ubicationClick(m)">
         <div class="md-layout-item md-medium-size-100 md-large-size-100"
          v-if="index==0 || m.ciudad!= markers[(index - 1)].ciudad"
@@ -22,7 +22,7 @@
             {{m .ciudad}},
             {{m .colonia_comercial}},
             {{m .delegacion}}<br>
-            <span class="small"> ({{m.lat}}, {{m.lng}})</span>
+            <span class="small"> ({{m.map_ubication.lat}}, {{m.map_ubication.lng}})</span>
           </div>
         </div>
 

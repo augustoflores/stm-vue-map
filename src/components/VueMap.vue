@@ -20,7 +20,7 @@
       }" :zoom="zoom" :center="{lat: centerLat, lng: centerLng}" ref="myMapRef" @bounds_changed="boundsChanged"
       @zoom_changed="zoomChanged">
       <gmap-cluster :ignoreHidden=true :gridSize="30" :zoomOnClick="true" :minimumClusterSize="2" :maxZoom="15">
-        <GmapMarker :key="index" v-for="(m, index) in markers" :position="{lat:Number(m.lat), lng:Number(m.lng)}"
+        <GmapMarker :key="index" v-for="(m, index) in markers" :position="{lat:Number(m.map_ubication.lat), lng:Number(m.map_ubication.lng)}"
           :title="m.direccion_comercial" :clickable="true" @mouseover="ubicationOver(m)" @mouseout="ubicationOut(m)"
           @click="ubicationClick(m)">
         </GmapMarker>

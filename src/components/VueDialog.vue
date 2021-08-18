@@ -5,7 +5,7 @@
         <h3 class="md-title" style="flex: 1">
           <md-icon class="icon">room</md-icon>{{infoDireccionComercial}}
           <md-chip class="md-accent chip" @click="zoomClick()">
-            <md-icon class="icon" >zoom_in</md-icon>
+            <md-icon class="icon">zoom_in</md-icon>
             <md-tooltip md-direction="top">Acercar en el mapa</md-tooltip>
           </md-chip>
 
@@ -65,16 +65,13 @@
                 <md-subheader>
                   <md-icon class="icon">pie_chart</md-icon>Porcentajes Nse
                 </md-subheader>
-                <VuePie :labels="['A','B','C','D','E']" 
-                  :arrvalues="[
+                <VuePie :labels="['A','B','C','D','E']" :arrvalues="[
                     infoNse_a.replace('%',''),
                     infoNse_b.replace('%',''),
                     infoNse_c.replace('%',''),
                     infoNse_d.replace('%',''),
                     infoNse_e.replace('%','')
-                  ]" 
-                  v-if="loaded"
-                />
+                  ]" v-if="loaded" />
 
                 <!--span v-if="infoNse_a"><b>Nse A:</b> {{infoNse_a.replace('%','')}}</span> <br class=" md-xsmall-hide md-small-show">
                 <span v-if="infoNse_b"><b>Nse B:</b> {{infoNse_b}}</span> <br class=" md-xsmall-hide md-small-show">
@@ -87,16 +84,13 @@
                 <md-subheader>
                   <md-icon class="icon">groups</md-icon>Edades
                 </md-subheader>
-                <VuePie :labels="['13-17','18-25','26-40','41-55','55+']" 
-                  :arrvalues="[
+                <VuePie :labels="['13-17','18-25','26-40','41-55','55+']" :arrvalues="[
                     infoEdad_13_17.replace('%',''),
                     infoEdad_18_25.replace('%',''),
                     infoEdad_26_40.replace('%',''),
                     infoEdad_41_55.replace('%',''),
                     infoEdad_55_mas.replace('%','')
-                  ]" 
-                  v-if="loaded"
-                />
+                  ]" v-if="loaded" />
                 <!--span v-if="infoEdad_13_17"><b>Edad 13-17:</b> {{infoEdad_13_17}}</span> <br
                   class=" md-xsmall-hide md-small-show">
                 <span v-if="infoEdad_18_25"><b>Edad 18-25:</b> {{infoEdad_18_25}}</span> <br
@@ -152,25 +146,36 @@
         </div-->
 
         </md-tab>
-        <md-tab md-label="Galeria" class="contentScroll fondo1b" md-icon="collections">
-        
+
+        <md-tab md-label="Galeria" class="contentScroll" md-icon="collections" v-if="galeria">
+          <div class="contenedorgaleria">
+            <carousel-3d :controls-visible="true" v-if="loaded" :autoplay="true" :autoplayTimeout="4000" :autoplayHoverPause="true">
+              <slide :key="i" v-for="(id, i) in galeria" :index="i">
+                <img :src="getAttachmentUrl(id)" width="400" height="300">
+              </slide>
+            </carousel-3d>
+          </div>
         </md-tab>
-        <md-tab md-label="Video" class="contentScroll fondo1b" md-icon="video_camera_back">
-          <center>
-          <video controls width="400" height="280" v-if="video">
-              <source :src="getAttachmentUrl(video)"
-                      type="video/mp4">
-              Su navegador no permite videos
-          </video>
-          </center>
-        </md-tab>
+
+
+
         <md-tab md-label="Vista de calle" class="contentScroll fondo1b" md-icon="streetview">
           <gmap-street-view-panorama class="pano" :pov="{heading: 0, pitch: 0}"
             :position="{lat: Number(this.lat),lng: Number(this.lng)}" :zoom="1">
           </gmap-street-view-panorama>
         </md-tab>
 
+        <md-tab md-label="Video" class="contentScroll fondo1b" md-icon="video_camera_back" v-if="video">
+          <div id="video">
+            <video controls width="400" height="280">
+              <source :src="getAttachmentUrl(video)" type="video/mp4">
+              Su navegador no permite videos
+            </video>
+          </div>
+        </md-tab>
+
       </md-tabs>
+
       <md-dialog-actions class="fondo2">
         <a href="/ingresar/olvide-contrasena/" class="link" v-if="!authenticated">
           Olvide Contraseña <md-icon class="icon">person_search</md-icon>
@@ -262,7 +267,7 @@
             <md-subheader>
               <md-icon class="icon">groups</md-icon>Edades
             </md-subheader>
-            
+
             <span v-if="infoEdad_13_17"><b>Edad 13-17:</b> {{infoEdad_13_17}}</span> <br
               class=" md-xsmall-hide md-small-show">
             <span v-if="infoEdad_18_25"><b>Edad 18-25:</b> {{infoEdad_18_25}}</span> <br
@@ -300,6 +305,10 @@
   import VueHtml2pdf from 'vue-html2pdf'
   import VueQrcode from 'vue-qrcode'
   import VuePie from "./VuePie.vue";
+  import {
+    Carousel3d,
+    Slide
+  } from 'vue-carousel-3d';
 
   import {
     validationMixin
@@ -309,7 +318,7 @@
     email,
   } from 'vuelidate/lib/validators'
 
-  Vue.use(VueAxios, axios, VueHtml2pdf, VueQrcode, VuePie)
+  Vue.use(VueAxios, axios, VueHtml2pdf, VueQrcode, VuePie, Carousel3d)
 
   export default {
     name: 'VueDialog',
@@ -318,6 +327,8 @@
       VueHtml2pdf,
       VueQrcode,
       VuePie,
+      Carousel3d,
+      Slide,
     },
     props: {
       zoom: Number,
@@ -358,8 +369,8 @@
       lat: 0,
       lng: 0,
       img: '',
-      video:"",
-      galeria:[],
+      video: "",
+      galeria: [],
       form: {
         username: '',
         password: '',
@@ -369,7 +380,7 @@
     }),
     mounted() {
       this.getUbication(this.$route.params.marker)
-      this.loaded=true
+      this.loaded = true
     },
     validations: {
       form: {
@@ -390,8 +401,8 @@
       zoomClick: function () {
         this.$router.push("/")
         this.$emit('zoomToParent', {
-          lat: this.currentUbication.lat,
-          lng: this.currentUbication.lng,
+          lat: this.currentUbication.map_ubication.lat,
+          lng: this.currentUbication.map_ubication.lng,
         })
       },
       closeDialog: function () {
@@ -432,14 +443,15 @@
         this.infoEdad_26_40 = this.currentUbication["edad_26-40"]
         this.infoEdad_41_55 = this.currentUbication["edad_41-55"]
         this.infoEdad_55_mas = this.currentUbication.edad_55_mas
-        this.lat = this.currentUbication.lat
-        this.lng = this.currentUbication.lng
+        this.lat = this.currentUbication.map_ubication.lat
+        this.lng = this.currentUbication.map_ubication.lng
         this.img = this.currentUbication.img
         this.video = this.currentUbication.video
-        if(this.currentUbication.featured_media!="0"){
-          this.img =this.currentUbication._embedded["wp:featuredmedia"][0].link
+        this.galeria = this.currentUbication.galeria
+
+        if (this.currentUbication.featured_media != "0") {
+          this.img = this.currentUbication._embedded["wp:featuredmedia"][0].link
         }
-        console.log(this.img);
 
       },
       doLogin() {
@@ -481,7 +493,7 @@
       },
       getImgUrl: function (img) {
         //http://sotmedia.com.mx/?attachment_id=1470
-        if(img.indexOf("sotmedia")>-1){
+        if (img.indexOf("sotmedia") > -1) {
           return img
         }
         return '/ubications-images/' + img
@@ -489,8 +501,8 @@
       getImgUrlLocal: function (img) {
         return '/ubications-images/' + img
       },
-      getAttachmentUrl: function(id){
-        return "https://sotmedia.com.mx/?attachment_id="+id
+      getAttachmentUrl: function (id) {
+        return "https://sotmedia.com.mx/?attachment_id=" + id
       },
     }
   }
@@ -585,7 +597,7 @@
   }
 
   .fondo0 {
-    background: #1FAAD1!important;
+    background: #1FAAD1 !important;
 
     h3,
     i {
@@ -632,6 +644,13 @@
     //background: #F75D29;
   }
 
+  .contenedorgaleria {
+    min-height: 300px;
+  }
+  #video{
+    text-align: center;
+  }
+
   @media only screen and (min-width: 600px) {
     .pano {
       height: 40vh;
@@ -648,7 +667,7 @@
     }
 
     .dialogTitle {
-      font-size: 14px!important;
+      font-size: 14px !important;
     }
 
   }

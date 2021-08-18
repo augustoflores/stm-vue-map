@@ -170,8 +170,8 @@ export default {
       zoomClick:function(){
         this.$router.push("/")
         this.$emit('zoomToParent', {
-          lat:this.currentUbication.lat,
-          lng:this.currentUbication.lng,
+          lat:this.currentUbication.map_ubication.lat,
+          lng:this.currentUbication.map_ubication.lng,
         })
       },
       closeDialog:function(){
@@ -197,8 +197,8 @@ export default {
         this.infoDelegacion= this.currentUbication.delegacion
         this.infoSuperficie= this.currentUbication.superficie
         this.infoVista= this.currentUbication.vista
-        this.lat=this.currentUbication.lat
-        this.lng=this.currentUbication.lng
+        this.lat=this.currentUbication.map_ubication.lat
+        this.lng=this.currentUbication.map_ubication.lng
       },
       doLogin() {
         this.loginerror=false

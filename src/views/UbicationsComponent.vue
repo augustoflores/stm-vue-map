@@ -115,7 +115,7 @@
       this.axios.get("https://sotmedia.com.mx/wp-json/wp/v2/ubicacion?per_page=100&_embed").then(response => {
         this.isLoaded = true;
         var notEmptyMarkers = this.$_.filter(response.data,function(m){
-          return m.lat!=0
+          return m.map_ubication.lat!=0
         })
         this.markers = this.$_.sortBy(notEmptyMarkers, 'ciudad')
       })
