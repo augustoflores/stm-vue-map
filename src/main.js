@@ -7,6 +7,7 @@ import * as VueGoogleMaps from 'vue2-google-maps'
 import './registerServiceWorker'
 import router from './router'
 import VueLocalStorage from 'vue-localstorage'
+import VueCryptojs from 'vue-cryptojs'
 
 //import VueSessionStorage from 'vue-sessionstorage'
 
@@ -21,6 +22,7 @@ Vue.use(VueGoogleMaps, {
   },
 })
 Vue.use(VueLocalStorage)
+Vue.use(VueCryptojs)
 
 //Vue.use(VueSessionStorage)
 

@@ -1,9 +1,9 @@
 <template>
   <div class="map">
-    <router-view name="ficha" :authenticated="authenticated" :isAdmin="isAdmin" :markers="markers" :marker="marker"
+    <router-view name="ficha" :authenticated="authenticated" :isAdmin="isAdmin" :markers="markers" :marker="marker" :expirado="expirado"
       v-on:zoomToParent="onZoomEvent" v-on:tokenToParent="onTokenToParent"
        v-on:addPautaToParent="onAddPautaToParent" />
-    <GmapMap style="width: 100%; height: 100%;" :options="{
+    <GmapMap style="width: 100%; height: 100%;" v-if="!expirado" :options="{
         zoomControl: true,
         mapTypeControl: true,
         scaleControl: true,
@@ -26,7 +26,7 @@
         </GmapMarker>
       </gmap-cluster>
     </GmapMap>
-    <VueList v-if="isList || !isAdmin " :markers="markers" v-on:zoomToParent="onZoomEvent" />
+    <VueList v-if="isList || !isAdmin && !expirado" :markers="markers" v-on:zoomToParent="onZoomEvent" />
     <md-speed-dial class="currentPosition" md-direction="bottom" >
       <md-speed-dial-target class="md-primary" v-on:click="geolocation()">
         <md-icon>my_location</md-icon>
@@ -68,7 +68,8 @@
       showDialog: Boolean,
       authenticated: Object,
       isList: Boolean,
-      isAdmin:Boolean
+      isAdmin:Boolean,
+      expirado:Boolean,
     },
     data: () => ({
       fullscreen: false,

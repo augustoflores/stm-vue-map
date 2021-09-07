@@ -1,5 +1,5 @@
 <template>
-  <div id="lista">
+  <div id="lista" v-if="!expirado">
     <div class="md-layout md-gutter">
       <div
         class="item md-layout-item md-layout  md-gutter md-xsmall-size-100 md-small-size-100 md-medium-size-100 md-large-size-100"
@@ -9,7 +9,7 @@
          v-if="index==0 || m.ciudad!= markers[(index - 1)].ciudad"
         >
           <h3 >
-            {{m.ciudad}}
+            {{m.ciudad.toUpperCase()}}
           </h3>
         </div>
         <div class="md-layout-item foto md-medium-size-30 md-large-size-50">
@@ -38,7 +38,8 @@
   export default {
     name: 'VueList',
     props: {
-      markers: Array
+      markers: Array,
+      expirado: Boolean
     },
     data: () => ({
       currentUbication: {},

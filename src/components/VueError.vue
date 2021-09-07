@@ -9,39 +9,13 @@
       <div class="md-layoutb md-gutter">
         <div class="md-layoutb-item md-size-100">
           <md-subheader>
-            <md-icon class="icon">lock</md-icon>Ingresar<br>
-            (Accede o registrate para ver mas detalles)
+            <md-icon class="icon">lock</md-icon>Pauta expirada<br>
+            Solicite una nueva pauta
           </md-subheader>
         </div>
-        <div class="md-layoutb-item md-nosize-100">
-          <md-field :class="getValidationClass('username')">
-            <label>Correo</label>
-            <md-input v-model="form.username"></md-input>
-            <span class="md-error" v-if="!$v.form.username.required">Introduce tu correo</span>
-            <span class="md-error" v-else-if="!$v.form.username.email">Introduzca un correo valido</span>
-          </md-field>
-        </div>
-        <div class="md-layoutb-item md-xsmall-size-100 md-small-size-100">
-          <md-field :class="getValidationClass('password')">
-            <label>Contraseña</label>
-            <md-input v-model="form.password" type="password" @keyup.enter="validateUser()"></md-input>
-            <span class="md-error" v-if="!$v.form.password.required">Introduce tu contraseña</span>
-          </md-field>
-        </div>
+
       </div>
-             <div  class="md-layout">
-            <div class="md-layout-item md-size-100 aligncenter">
-              <md-button :disabled="loginwait" class="md-raised md-primary" @click="validateUser()">Ingresar
-                <md-icon class="icon" v-if="!loginwait">login</md-icon>
-              <md-progress-spinner v-if="loginwait" class="md-accent" :md-diameter="15" :md-stroke="2" md-mode="indeterminate"></md-progress-spinner>
-              </md-button>
-            </div>
-            <div class="md-layout-item md-size-100 aligncenter">
-              <md-chip class="md-accent" v-if="loginerror">
-                Error de autenticacion <md-icon>error</md-icon>
-              </md-chip>
-            </div>
-        </div>
+       
     </form>
     <md-dialog-actions class="fondo2">
       <a href="/ingresar/olvide-contrasena/" class="link" v-if="!authenticated">
@@ -68,7 +42,7 @@
   Vue.use(VueAxios, axios)
 
   export default {
-    name: 'VueLogin',
+    name: 'VueError',
     mixins: [validationMixin],
     components: {
 

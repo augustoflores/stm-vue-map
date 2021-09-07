@@ -9,7 +9,9 @@
         :zoom="zoom" :showDialog="showDialog" v-on:childToParent="onChildEvent" v-on:zoomToParent="onZoomEvent"
         v-on:zoomChangedToParent="onZoomChangedEvent" v-on:showDialogToParent="showDialogEvent"
         v-on:addPautaToParent="onAddPauta" v-on:tokenToParent="onTokenToParent" v-on:fullscreenToParent="toggle"
-        :authenticated="authenticated" :isAdmin="isAdmin" :isList="isList" :markersPauta="markersPauta" />
+        :authenticated="authenticated" :isAdmin="isAdmin" :isList="isList" :markersPauta="markersPauta"
+        :expirado="expirado"
+         />
     </div>
     <div class="filter" v-if="authenticated">
       <VueFilter :infoDireccionComercial="infoDireccionComercial" :infoFormato="infoFormato"
@@ -30,7 +32,8 @@
   import VueMap from '@/components/VueMap.vue'
   import VueFilter from '@/components/VueFilter.vue'
   import underscore from 'vue-underscore';
-  Vue.use(underscore);
+  import CryptoJS from 'crypto-js';
+  Vue.use(underscore,CryptoJS);
 
   export default {
     name: 'UbicationsComponent',
@@ -38,7 +41,9 @@
       VueMap,
       VueFilter,
     },
-    props: {},
+    props: {
+      expirado: Boolean,
+    },
     data: function () {
       return {
         isList: true,
@@ -74,7 +79,21 @@
     mounted() {
       var now = new Date()
       try {
-        this.markersPauta = this.$route.params.markers.split(",").map(Number)
+        var unencrypted=CryptoJS.AES.decrypt(this.$route.params.markers,"protect3892").toString(this.CryptoJS.enc.Utf8)
+        var ExpirationDate= new Date(unencrypted.split("|")[1])
+        if(now>ExpirationDate){
+          console.log("ya expiro")
+          this.expirado=true
+          this.$router.push("/expirado")
+          this.markersPauta = []
+
+        }else{
+          console.log("no expiro")
+          this.expirado=false
+          var joinedmarkers=unencrypted.split("|")[0]
+          this.markersPauta = joinedmarkers.split(",").map(Number)
+        }
+
       } catch (error) {
         //console.log("Not pauta");
       }

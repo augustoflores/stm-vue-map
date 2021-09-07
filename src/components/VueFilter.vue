@@ -71,11 +71,33 @@
           </div>
           <div class="md-size-100 md-layout-item"  v-if="markersPauta.length">
             <div class="alignright">
-              <div class="url">
-                https://sotmedia.com.mx/mapa/#/pauta/{{this.markersPauta.join(',')}}
+              <div class="url">            
+                {{                 
+                  path+
+                  encodeURIComponent(this.CryptoJS.AES.encrypt(
+                    markersPauta.join(',')+
+                    '|'+
+                    myFutureDate
+                  ,'protect3892').toString())
+                }}
               </div>
+              <!--div class="url">            
+                {{                 
+                  path+
+                    markersPauta.join(',')+
+                    '|'+
+                    myFutureDate
+                }}
+              </div-->
               <div class="copy" 
-              v-clipboard:copy="path.concat('', markersPauta.join(','))" 
+              v-clipboard:copy="
+                  path+
+                  encodeURIComponent(this.CryptoJS.AES.encrypt(
+                    markersPauta.join(',')+
+                    '|'+
+                    myFutureDate
+                  ,'protect3892').toString())
+              "
               v-clipboard:success="onCopy" 
               v-clipboard:error="onError"
               v-if="!isShareable">
@@ -106,9 +128,15 @@
   import Vue from 'vue'
   import VueClipboard from 'vue-clipboard2'
   import NavigatorShare from 'vue-navigator-share'
+  import VueCryptojs from 'vue-cryptojs'
+  import CryptoJS from 'crypto-js';
+
+
   Vue.use(
     VueClipboard,
     NavigatorShare,
+    VueCryptojs,
+    CryptoJS
   )
   export default {
     name: 'VueFilter',
@@ -143,15 +171,22 @@
       selectedTipo: [],
       selectedFormato: [],
       showSnackbar: false,
-      path: "https://localhost:8080/#/pauta/",
-      //path: "https://sotmedia.com.mx/mapa/#/pauta/",
+      //path: "http://localhost:8080/#/pauta/",
+      path: "https://sotmedia.com.mx/mapa/#/pauta/",
+      encripted:"",
+      myCurrentDate: new Date(),
+      myFutureDate: new Date(),
+      shareUrl: String
     }),
     mounted: function () {
+      this.encripted= this.CryptoJS.AES.encrypt("Hi There!", "protect3892").toString()
       this.selectedTipo = this.arr_tipo_lona
       this.selectedFormato = this.arr_formato
       this.setTipoSelected(this.arr_tipo_lona)
       this.setFormatoSelected(this.arr_formato)
       this.isShareable==navigator.share
+      this.myFutureDate=new Date(
+        this.myCurrentDate.setMonth(this.myCurrentDate.getMonth()+4))
     },
     methods: {
       ubicationClick: function (info) {
@@ -364,6 +399,7 @@
     }
     .url{
         word-break: break-all;
+        font-size: 9px!important;
     }
   }
 

@@ -4,6 +4,7 @@ import UbicationsComponent from '@/views/UbicationsComponent'
 //import LoginComponent from '@/views/LoginComponent'
 import VueDialog from '@/components/VueDialog'
 import VueLogin from '@/components/VueLogin'
+import VueError from '@/components/VueError'
 
 //import VuePauta from '@/components/VuePauta'
 
@@ -49,6 +50,16 @@ const routes = [
         props: {
           default: true,
           ficha:true
+        },
+      },
+      {
+        path: '/expirado',
+        name: 'Expirado',
+        components: {ficha:VueError},
+        props: {
+          default: true,
+          ficha:true,
+          expirado:true
         },
       },
     ]

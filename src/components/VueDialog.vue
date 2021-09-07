@@ -149,7 +149,8 @@
 
         <md-tab md-label="Galeria" class="contentScroll" md-icon="collections" v-if="galeria">
           <div class="contenedorgaleria">
-            <carousel-3d :controls-visible="true" v-if="loaded" :autoplay="true" :autoplayTimeout="4000" :autoplayHoverPause="true">
+            <carousel-3d :controls-visible="true" v-if="loaded" :autoplay="true" :autoplayTimeout="4000"
+              :autoplayHoverPause="true">
               <slide :key="i" v-for="(id, i) in galeria" :index="i">
                 <img :src="getAttachmentUrl(id)" width="400" height="300">
               </slide>
@@ -195,13 +196,12 @@
     </md-dialog>
     <vue-html2pdf :show-layout="false" :float-layout="true" :enable-download="true" :paginate-elements-by-height="1400"
       filename="ficha" :pdf-quality="2" :manual-pagination="false" pdf-format="letter"
-      :html-to-pdf-options={margin:20,filename:infoDireccionComercial} pdf-orientation="portrait"
+      :html-to-pdf-options={margin:5,filename:infoDireccionComercial} pdf-orientation="portrait"
       pdf-content-width="800px" ref="html2Pdf" v-if="authenticated">
       <section slot="pdf-content">
         <div class="md-layout">
-
           <div class="md-layout-item md-size-100">
-            <img src="../assets/sotmedia.png" width="100">
+            <img src="../assets/cabeza.png" width="800">
           </div>
 
           <div class="md-layout-item md-size-100" style="tex-align:right;">
@@ -292,6 +292,9 @@
                 https://sotmedia.com.mx/mapa/#/{{currentUbication.id}}
               </a>
             </p>
+          </div>
+          <div class="md-layout-item md-size-100">
+            <img src="../assets/pie.png" width="800">
           </div>
         </div>
       </section>
@@ -647,7 +650,8 @@
   .contenedorgaleria {
     min-height: 300px;
   }
-  #video{
+
+  #video {
     text-align: center;
   }
 
